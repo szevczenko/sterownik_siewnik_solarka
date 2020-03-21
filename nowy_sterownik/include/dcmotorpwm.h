@@ -20,7 +20,13 @@ Please refer to LICENSE file for licensing information.
 //#define DCMOTORPWM_PIN2 PB2
 
 //set minimum velocity
+#if CONFIG_DEVICE_SOLARKA
 #define DCMOTORPWM_MINVEL 200
+#endif
+
+#if CONFIG_DEVICE_SIEWNIK
+#define DCMOTORPWM_MINVEL 180
+#endif
 
 //freq = 1 / time
 //pulse freq = FCPU / prescaler * ICR1

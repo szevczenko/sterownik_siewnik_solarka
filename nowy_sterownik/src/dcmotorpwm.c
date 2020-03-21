@@ -29,7 +29,11 @@ void dcmotorpwm_init(void) {
 	LED_MOTOR_OFF;
 	TCCR2 = 0;
 	DCMOTORPWM_DDR |= (1<<DCMOTORPWM_PIN1);
+	#if CONFIG_DEVICE_SOLARKA
 	CLEAR_PIN(DCMOTORPWM_PORT, DCMOTORPWM_PIN1);
+	#else
+	SET_PIN(DCMOTORPWM_PORT, DCMOTORPWM_PIN1);
+	#endif
 }
 
 void dcmotorpwm_deinit(void)
@@ -38,7 +42,11 @@ void dcmotorpwm_deinit(void)
 	motorD.state = MOTOR_NO_INIT;
 	#if !TEST_APP
 	TCCR2 = 0;
+	#if CONFIG_DEVICE_SOLARKA
 	CLEAR_PIN(DCMOTORPWM_PORT, DCMOTORPWM_PIN1);
+	#else
+	SET_PIN(DCMOTORPWM_PORT, DCMOTORPWM_PIN1);
+	#endif
 	LED_MOTOR_OFF;
 	#endif
 }
@@ -85,7 +93,13 @@ int dcmotorpwm_start(void)
 		//debug_msg("Motor Start\n");
 		#if !TEST_APP
 		LED_MOTOR_ON;
-		TCCR2 |= (1<<COM21); //non-inverting mode for OC1A
+		
+		#if CONFIG_DEVICE_SOLARKA
+		TCCR2 |= (1<<COM21); 
+		#else
+		TCCR2 |= (1<<COM21) | (1<<COM20); 
+		#endif
+		
 		TCCR2 |= (1<<WGM20);
 		TCCR2 |= DCMOTORPWM_PRESCALER; //set prescaler
 		#endif
@@ -103,7 +117,11 @@ int dcmotorpwm_start(void)
 
 static uint8_t count_pwm(int pwm)
 {
+	#if CONFIG_DEVICE_SOLARKA
 	return DCMOTORPWM_MINVEL + (255 - DCMOTORPWM_MINVEL)*pwm/99;
+	#else
+	return ((DCMOTORPWM_ICR2-DCMOTORPWM_MINVEL) * (pwm / 100.0)) + DCMOTORPWM_MINVEL;
+	#endif
 }
 
 int dcmotor_set_pwm(int pwm)
