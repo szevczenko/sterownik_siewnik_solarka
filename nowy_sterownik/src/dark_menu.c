@@ -15,6 +15,7 @@
 #include "eeprom.h"
 #include "disp.h"
 #include "but.h"
+#include "display_d.h"
 
 static uint8_t last_button;
 uint8_t state_menu;

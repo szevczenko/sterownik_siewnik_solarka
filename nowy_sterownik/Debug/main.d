@@ -17,6 +17,7 @@ main.d main.o: .././main.c \
  ../include/measure.h ../include/accumulator.h ../include/servo.h \
  ../include/dcmotorpwm.h ../include/vibro.h ../include/buz.h \
  ../include/error_siewnik.h ../include/error_solarka.h \
+ ../include/dark_menu.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\stdio.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\lib\gcc\avr\5.4.0\include\stdarg.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\lib\gcc\avr\5.4.0\include\stddef.h
@@ -78,6 +79,8 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\
 ../include/error_siewnik.h:
 
 ../include/error_solarka.h:
+
+../include/dark_menu.h:
 
 c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\stdio.h:
 

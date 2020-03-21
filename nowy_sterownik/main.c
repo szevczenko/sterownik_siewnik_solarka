@@ -20,6 +20,7 @@
 #include "buz.h"
 #include "error_siewnik.h"
 #include "error_solarka.h"
+#include "dark_menu.h"
 
 #if L_DEBUG
 #include <stdio.h>
@@ -103,6 +104,7 @@ int main(void)
 		dcmotor_process(motor_value);
 		#if CONFIG_DEVICE_SIEWNIK
 		servo_process(servo_vibro_value);
+		menu_process();
 		#endif
 		#if CONFIG_DEVICE_SOLARKA
 		vibro_process();
