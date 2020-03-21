@@ -17,6 +17,9 @@
 #include "servo.h"
 #if CONFIG_DEVICE_SIEWNIK
 
+#define CLOSE_SERVO servo_set_pwm_val(0);
+#define OFF_SERVO set_pwm(19999);
+
 static void servo_exit_try(void);
 
 sDriver servoD;
@@ -30,19 +33,16 @@ static void set_pwm(uint16_t pwm)
 	//OCR1B = pwm;
 }
 
-static void on_pwm(void)
+void servo_set_pwm_val(uint8_t value)
 {
-	#if !TEST_APP
-	TCCR1B |= (1<<CS11);
-	#endif
+	if (value == 0)
+	set_pwm(1900);
+	else if(value < 50)
+	set_pwm(1800 - value*7);
+	else if(value <= 99)
+	set_pwm(1450 - (value - 50)*4);
 }
 
-static void off_pwm(void)
-{
-	#if !TEST_APP
-	TCCR1B &= ~(1<<CS11);
-	#endif
-}
 
 void servo_init(uint8_t prescaler)
 {
@@ -97,7 +97,7 @@ int servo_open(uint8_t value) // value - 0-100%
 	{
 		servoD.state = SERVO_OPEN;
 		servoD.value = value;
-		set_pwm((uint16_t)value);
+		servo_set_pwm_val((uint16_t)value);
 		debug_msg("SERVO_OPPENED %d\n", value);
 		LED_SERVO_ON;
 		return 1;
@@ -128,7 +128,7 @@ int servo_close(void)
 {
 	if (servo_is_open())
 	{
-		set_pwm((uint16_t)0);
+		servo_set_pwm_val((uint16_t)0);
 		servoD.state = SERVO_CLOSE;
 		servoD.value = 0;
 		debug_msg("SERVO_CLOSED %d\n", servoD.value);

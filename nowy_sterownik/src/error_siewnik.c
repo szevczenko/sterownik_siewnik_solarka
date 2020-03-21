@@ -8,6 +8,7 @@
 #include "servo.h"
 #include "buz.h"
 #include "display_d.h"
+
 #if CONFIG_DEVICE_SIEWNIK
 ///////////////////////////////////////
 ///TODO get_calibration_value
@@ -60,6 +61,13 @@ void error_deinit(void)
 	evTime_off(&motor_timer);
 	evTime_off(&servo_timer);
 	led_blink = ERR_REASON_NO;
+}
+
+#define RESISTOR 1
+
+void currentCount(void)
+{
+	
 }
 
 uint16_t errorGetMotorVal(void)
