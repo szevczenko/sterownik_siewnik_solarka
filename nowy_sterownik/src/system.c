@@ -644,9 +644,6 @@ void disp_very_fast_process(void)
 void system_error(void)
 {
 	off_button();
-	#if CONFIG_DEVICE_SIEWNIK
-	servo_close();
-	#endif
 	#if CONFIG_DEVICE_SOLARKA
 	vibro_off();
 	#endif

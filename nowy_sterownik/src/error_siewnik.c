@@ -278,6 +278,7 @@ static void set_error_state(error_reason_ reason)
 	SET_PIN(system_events, EV_SYSTEM_ERROR_MOTOR);
 	display_set_error(reason);
 	dcmotor_set_error();
+	servo_error();
 	system_error();
 	led_blink = reason;
 }

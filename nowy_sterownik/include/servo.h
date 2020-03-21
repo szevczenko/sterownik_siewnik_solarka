@@ -20,6 +20,9 @@
 
 #if CONFIG_DEVICE_SIEWNIK
 
+#define CLOSE_SERVO servo_set_pwm_val(0);
+#define OFF_SERVO set_pwm(19999);
+
 typedef enum
 {
 	SERVO_NO_INIT = 0,
@@ -27,7 +30,8 @@ typedef enum
 	SERVO_OPEN,
 	SERVO_DELAYED_OPEN,
 	SERVO_TRY,
-	SERVO_ERROR 
+	SERVO_ERROR_PROCESS,
+	SERVO_ERROR
 }SERVOState;
 
 typedef struct  
@@ -41,7 +45,7 @@ typedef struct
 }sDriver;
 
 void servo_init(uint8_t prescaler);
-
+void servo_error(void);
 void servo_process(uint8_t value);
 int servo_close(void);
 void servo_enable_try(void);

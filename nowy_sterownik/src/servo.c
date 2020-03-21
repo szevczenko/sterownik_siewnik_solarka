@@ -17,9 +17,6 @@
 #include "servo.h"
 #if CONFIG_DEVICE_SIEWNIK
 
-#define CLOSE_SERVO servo_set_pwm_val(0);
-#define OFF_SERVO set_pwm(19999);
-
 static void servo_exit_try(void);
 
 sDriver servoD;
@@ -41,6 +38,30 @@ void servo_set_pwm_val(uint8_t value)
 	set_pwm(1800 - value*7);
 	else if(value <= 99)
 	set_pwm(1450 - (value - 50)*4);
+}
+
+void servo_error(void)
+{
+	CLOSE_SERVO;
+	LED_SERVO_OFF;
+	servoD.state = SERVO_ERROR_PROCESS;
+}
+
+static void servo_error_process(void)
+{
+	static evTime timeout;
+	if (evTime_is_stated(&timeout))
+	{
+		if (evTime_check(&timeout) == 1)
+		{
+			servoD.state = SERVO_ERROR;
+			OFF_SERVO;
+		}
+	}
+	else
+	{
+		evTime_start(&timeout, 2000);
+	}
 }
 
 
@@ -173,7 +194,7 @@ static void servo_try_process(void)
 	{
 		evTime_start(&timeout, 100);
 		try_count++;
-		set_pwm(servoD.value + try_count);
+		servo_set_pwm_val(servoD.value + try_count);
 	}
 	else if (try_count > 0 && try_count < TRY_OPEN_VAL)
 	{
@@ -181,13 +202,13 @@ static void servo_try_process(void)
 		{
 			evTime_start(&timeout, 100);
 			try_count++;
-			set_pwm(servoD.value + try_count);
+			servo_set_pwm_val(servoD.value + try_count);
 		}
 	}
 	else
 	{
 		try_count = 0;
-		set_pwm(servoD.value);
+		servo_set_pwm_val(servoD.value);
 		servoD.state = servoD.last_state;
 		servoD.try_cnt++;
 	}
@@ -221,13 +242,19 @@ void servo_process(uint8_t value)
 		{
 			case SERVO_OPEN:
 			servoD.value = value;
-			set_pwm((uint16_t)value);
+			servo_set_pwm_val((uint16_t)value);
 			break;
 			case SERVO_TRY:
 			servo_try_process();
 			break;
 			case SERVO_DELAYED_OPEN:
 			servo_delayed_open_process();
+			break;
+			case SERVO_ERROR_PROCESS:
+			servo_error_process();
+			break;
+			case SERVO_ERROR:
+			OFF_SERVO;
 			break;
 		}
 		if (evTime_check(&servoD.timeout) == 1) 
