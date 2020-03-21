@@ -72,9 +72,11 @@ void measure_process(void)
 		///////////////////////////////////////////////////////////
 		////////// TODO isset_timer
 		s_o_t_adc = adc_read(SERVO_ADC_CH);
-
-		//if (s_o_t_adc < SERVO_CALIBRATION_VALUE) s_o_t_adc = 0;
-		//else s_o_t_adc = s_o_t_adc - SERVO_CALIBRATION_VALUE;
+		
+		#if CONFIG_DEVICE_SIEWNIK
+		if (s_o_t_adc < SERVO_CALIBRATION_VALUE) s_o_t_adc = 0;
+		else s_o_t_adc = s_o_t_adc - SERVO_CALIBRATION_VALUE;
+		#endif
 
 		s_o_t_f_table[s_o_t_iteration_adc_table] = s_o_t_adc;
 		iteration_adc_motor_table++;
@@ -82,7 +84,7 @@ void measure_process(void)
 		filtered_accum_adc_val = filtered_value(accumulator_tab, ACCUMULATOR_SIZE_TAB);
 		motor_filter_value = filtered_value(motor_f_table, FILTER_TABLE_SIZE);
 		s_o_t_filter_value = filtered_value(s_o_t_f_table, FILTER_TABLE_S_SIZE);
-		//debug_msg("accum %d, servo %d, motor %d\n",accum_adc, s_o_t_adc, motor_adc);
+		//debug_msg("ADC: accum %d, servo %d, motor %d\n",accum_adc, s_o_t_adc, motor_adc);
 		
 		if (iteration_adc_accum_table == ACCUMULATOR_SIZE_TAB) iteration_adc_accum_table = 0;
 		if (s_o_t_iteration_adc_table == FILTER_TABLE_S_SIZE) s_o_t_iteration_adc_table = 0;

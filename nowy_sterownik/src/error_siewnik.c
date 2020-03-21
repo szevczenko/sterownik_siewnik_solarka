@@ -7,6 +7,7 @@
 #include "system.h"
 #include "servo.h"
 #include "buz.h"
+#include "display_d.h"
 #if CONFIG_DEVICE_SIEWNIK
 ///////////////////////////////////////
 ///TODO get_calibration_value
@@ -33,8 +34,8 @@ static uint16_t motor_error_value;
 //////////////////////////////////
 //SERVO
 static uint16_t servo_error_value;
-static uint8_t error_servo_status;
 static err_servo_t error_servo_state;
+static uint8_t error_servo_status;
 static evTime servo_timer;
 
 void error_init(void)
@@ -75,18 +76,20 @@ void error_event(void)
 		if (system_events&(1<<EV_SYSTEM_ERROR_MOTOR)) return;
 		///////////////////////////////////////////////////////////////////////////////////////////
 		//MOTOR
-		#if CONFIG_USE_ERROR_MOTOR
+		
 		motor_error_value = count_motor_error_value(dcmotor_get_pwm());
-		if (measure_get_filtered_value(MEAS_MOTOR) > motor_error_value) //servo_vibro_value*5
+		uint16_t motor_adc_filterd = measure_get_filtered_value(MEAS_MOTOR);
+		float volt = accum_get_voltage();
+		debug_msg("MOTOR ADC: %d, ADC_max: %d, voltage: %f\n", motor_adc_filterd, motor_error_value, volt);
+		if (motor_adc_filterd > motor_error_value) //servo_vibro_value*5
 		{
-			debug_msg("motor_error_value: %d\n", motor_error_value);
 			error_motor_status = 1;
 		}
 		else
 		{
 			error_motor_status = 0;
 		}
-		
+		#if CONFIG_USE_ERROR_MOTOR
 		if (error_motor_status == 1)
 		{
 			switch(error_motor_state)

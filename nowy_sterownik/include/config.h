@@ -109,12 +109,12 @@ typedef enum
 #define UART_RX0_BUFFER_SIZE 0
 #define UART_TX0_BUFFER_SIZE 128
 #define USART0_ENABLED
-#define USE_USART 0
+#define USE_USART 1
 
 ///////////////////////////////////////////
 ///ERROR
-#define CONFIG_USE_ERROR_MOTOR 1
-#define CONFIG_USE_ERROR_SERVO 1
+#define CONFIG_USE_ERROR_MOTOR 0
+#define CONFIG_USE_ERROR_SERVO 0
 #define CONFIG_USE_ERROR_VOLTAGE 1
 #if CONFIG_DEVICE_SIEWNIK
 #define CONFIG_USE_AXELERATE_MOTOR 1
