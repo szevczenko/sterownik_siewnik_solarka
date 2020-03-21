@@ -70,12 +70,30 @@ void servo_init(uint8_t prescaler)
 
 int servo_is_open(void)
 {
-	return servoD.state == SERVO_OPEN;
+	return servoD.state == SERVO_OPEN || servoD.state == SERVO_DELAYED_OPEN;
+}
+
+int servo_delayed_open(uint8_t value)
+{
+	if (servoD.state == SERVO_CLOSE)
+	{
+		servoD.state = SERVO_DELAYED_OPEN;
+		servoD.value = value;
+		debug_msg("SERVO_DELAYED_OPEN %d\n", value);
+		return 1;
+	}
+	/*
+	else if (servoD.state == SERVO_TRY)
+	{
+		servo_exit_try();
+		return 1;
+	}*/
+	else return 0;
 }
 
 int servo_open(uint8_t value) // value - 0-100%
 {
-	if (servoD.state == SERVO_CLOSE || servoD.state == SERVO_OPEN)
+	if (servoD.state == SERVO_CLOSE || servoD.state == SERVO_OPEN || servoD.state == SERVO_DELAYED_OPEN)
 	{
 		servoD.state = SERVO_OPEN;
 		servoD.value = value;
@@ -131,7 +149,22 @@ void servo_try_reset_timeout(uint32_t time_ms)
 	evTime_start(&servoD.timeout, time_ms);
 }
 
-
+static void servo_delayed_open_process(void)
+{
+	static evTime timeout;
+	if (evTime_is_stated(&timeout))
+	{
+		if (evTime_check(&timeout) == 1)
+		{
+			servoD.state = SERVO_OPEN;
+			LED_SERVO_ON;
+		}
+	}
+	else
+	{
+		evTime_start(&timeout, 2000);
+	}
+}
 
 static void servo_try_process(void)
 {
@@ -192,6 +225,9 @@ void servo_process(uint8_t value)
 			break;
 			case SERVO_TRY:
 			servo_try_process();
+			break;
+			case SERVO_DELAYED_OPEN:
+			servo_delayed_open_process();
 			break;
 		}
 		if (evTime_check(&servoD.timeout) == 1) 

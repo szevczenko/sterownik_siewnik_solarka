@@ -62,7 +62,11 @@ int dcmotorpwm_stop(void) {
 		debug_msg("dcmotor stop\n");
 		#if !TEST_APP
 		TCCR2 = 0;
+		#if CONFIG_DEVICE_SOLARKA
 		CLEAR_PIN(DCMOTORPWM_PORT, DCMOTORPWM_PIN1);
+		#else
+		SET_PIN(DCMOTORPWM_PORT, DCMOTORPWM_PIN1);
+		#endif
 		LED_MOTOR_OFF;
 		#endif
 		//OCR2 = 0;
@@ -91,7 +95,6 @@ int dcmotorpwm_start(void)
 	if (motorD.state == MOTOR_OFF)
 	{
 		//debug_msg("Motor Start\n");
-		#if !TEST_APP
 		LED_MOTOR_ON;
 		
 		#if CONFIG_DEVICE_SOLARKA
@@ -102,7 +105,6 @@ int dcmotorpwm_start(void)
 		
 		TCCR2 |= (1<<WGM20);
 		TCCR2 |= DCMOTORPWM_PRESCALER; //set prescaler
-		#endif
 		motorD.last_state = motorD.state;
 		motorD.state = MOTOR_AXELERATE;
 		evTime_start(&motorD.timeout, 1000);
@@ -117,11 +119,7 @@ int dcmotorpwm_start(void)
 
 static uint8_t count_pwm(int pwm)
 {
-	#if CONFIG_DEVICE_SOLARKA
 	return DCMOTORPWM_MINVEL + (255 - DCMOTORPWM_MINVEL)*pwm/99;
-	#else
-	return ((DCMOTORPWM_ICR2-DCMOTORPWM_MINVEL) * (pwm / 100.0)) + DCMOTORPWM_MINVEL;
-	#endif
 }
 
 int dcmotor_set_pwm(int pwm)
@@ -196,9 +194,11 @@ void dcmotor_process(uint8_t value)
 			break;
 
 			case MOTOR_ERROR:
-			#if !TEST_APP
 			TCCR2 = 0;
+			#if CONFIG_DEVICE_SOLARKA
 			CLEAR_PIN(DCMOTORPWM_PORT, DCMOTORPWM_PIN1);
+			#else
+			SET_PIN(DCMOTORPWM_PORT, DCMOTORPWM_PIN1);
 			#endif
 			break;
 

@@ -371,8 +371,20 @@ void button_dcmotor_cb(void * pv)
 		dip_set_value(DISP_MOTOR, motor_value);
 	}
 	sys_save_display();
-	if(!dcmotor_is_on()) dcmotorpwm_start();
-	else dcmotorpwm_stop();
+	if(!dcmotor_is_on())
+	{ 
+		dcmotorpwm_start();
+		#if CONFIG_DEVICE_SIEWNIK
+		servo_delayed_open(servo_vibro_value);
+		#endif
+	}
+	else 
+	{
+		dcmotorpwm_stop();
+		#if CONFIG_DEVICE_SIEWNIK
+		servo_close();
+		#endif
+	}
 }
 #if CONFIG_DEVICE_SIEWNIK
 void button_on_off_pwm(void * pv)
