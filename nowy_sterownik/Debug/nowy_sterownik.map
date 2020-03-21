@@ -125,7 +125,7 @@ Discarded input sections
  .data          0x00000000        0x0 src/adc.o
  .bss           0x00000000        0x0 src/adc.o
  .text.adc_init
-                0x00000000       0x14 src/adc.o
+                0x00000000       0x16 src/adc.o
  .text.acd_getrealvref
                 0x00000000        0x8 src/adc.o
  .text.adc_getresistence
