@@ -75,8 +75,9 @@ void error_event(void)
 		if (system_events&(1<<EV_SYSTEM_ERROR_MOTOR)) return;
 		///////////////////////////////////////////////////////////////////////////////////////////
 		//MOTOR
+		#if CONFIG_USE_ERROR_MOTOR
 		motor_error_value = count_motor_error_value(dcmotor_get_pwm());
-		if (servo_vibro_value*5 > motor_error_value) //measure_get_filtered_value(MEAS_MOTOR)
+		if (measure_get_filtered_value(MEAS_MOTOR) > motor_error_value) //servo_vibro_value*5
 		{
 			debug_msg("motor_error_value: %d\n", motor_error_value);
 			error_motor_status = 1;
@@ -161,12 +162,12 @@ void error_event(void)
 				break;
 			}
 		}
-		
+		#endif
 		//////////////////////////////////////////////////////////////////////////////////////
 		// SERVO
-		
+		#if CONFIG_USE_ERROR_SERVO
 		servo_error_value = count_servo_error_value();
-		if (servo_vibro_value*5 > servo_error_value) //measure_get_filtered_value(MEAS_SERVO)
+		if (measure_get_filtered_value(MEAS_SERVO) > servo_error_value) //servo_vibro_value*5
 		{
 			debug_msg("servo_error_value: %d\n", servo_error_value);
 			error_servo_status = 1;
@@ -238,6 +239,7 @@ void error_event(void)
 				break;
 			} //switch
 		} //else (error_servo_status == 1)
+		#endif
 	} //error_event_timer
 }
 
