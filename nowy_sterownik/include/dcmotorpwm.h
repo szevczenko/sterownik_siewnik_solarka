@@ -25,7 +25,7 @@ Please refer to LICENSE file for licensing information.
 #endif
 
 #if CONFIG_DEVICE_SIEWNIK
-#define DCMOTORPWM_MINVEL 50
+#define DCMOTORPWM_MINVEL 20
 #endif
 
 //freq = 1 / time

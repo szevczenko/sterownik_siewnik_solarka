@@ -76,6 +76,9 @@ void init_pin(void)
 
 void init_driver(void)
 {
+	#if CONFIG_DEVICE_SIEWNIK
+	init_menu();
+	#endif
 	timer0_init(TIM0_PRESCALER, TIM0_ARR);
 	init_display_drv();
 	init_buttons();
