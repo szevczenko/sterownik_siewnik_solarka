@@ -236,7 +236,7 @@ static void servo_exit_try(void)
 void servo_process(uint8_t value)
 {
 	static evTime servo_timer;
-	if (evTime_process_period(&servo_timer, 500))
+	if (evTime_process_period(&servo_timer, 75))
 	{
 		switch(servoD.state)
 		{
