@@ -68,6 +68,8 @@ void measure_process(void)
 		
 		iteration_adc_accum_table++;
 		motor_adc = adc_read(MOTOR_ADC_CH);
+		if (motor_adc > 31) motor_adc = motor_adc - 31;
+		else motor_adc = 0;
 		motor_f_table[iteration_adc_motor_table] = motor_adc;
 		///////////////////////////////////////////////////////////
 		////////// TODO isset_timer
