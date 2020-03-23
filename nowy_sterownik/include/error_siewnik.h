@@ -10,6 +10,8 @@
 #define SERVO_WAIT_AFTER_TRY 1500
 #define SERVO_TRY_CNT 3
 
+#define MOTOR_RESISTOR 0.033
+
 typedef enum
 {
 	ERR_M_OK,

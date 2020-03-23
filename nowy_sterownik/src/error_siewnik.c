@@ -65,11 +65,6 @@ void error_deinit(void)
 
 #define RESISTOR 1
 
-void currentCount(void)
-{
-	
-}
-
 uint16_t errorGetMotorVal(void)
 {
 	return motor_error_value;
@@ -87,8 +82,10 @@ void error_event(void)
 		
 		motor_error_value = count_motor_error_value(dcmotor_get_pwm());
 		uint16_t motor_adc_filterd = measure_get_filtered_value(MEAS_MOTOR);
+		uint16_t motor_adc_no = measure_get_value(MEAS_MOTOR);
+		float current = measure_get_current(MEAS_MOTOR, MOTOR_RESISTOR);
 		float volt = accum_get_voltage();
-		debug_msg("MOTOR ADC: %d, ADC_max: %d, voltage: %f\n", motor_adc_filterd, motor_error_value, volt);
+		debug_msg("MOTOR ADC: %d, ADC_max: %d, ADC_no_filter: %d, current: %f\n", motor_adc_filterd, motor_error_value, motor_adc_no, current);
 		if (motor_adc_filterd > motor_error_value) //servo_vibro_value*5
 		{
 			error_motor_status = 1;

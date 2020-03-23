@@ -131,3 +131,29 @@ uint16_t measure_get_value(_type_measure type)
     }
 	return 0;
 }
+
+float measure_get_current(_type_measure type, float resistor)
+{
+	uint32_t adc;
+	switch(type)
+	{
+		case MEAS_ACCUM:
+		adc = filtered_accum_adc_val;
+		break;
+
+		case MEAS_MOTOR:
+		adc = motor_filter_value;
+		break;
+
+		case MEAS_SERVO:
+		case MEAS_TEMPERATURE:
+		adc = s_o_t_filter_value;
+		break;
+		
+		default:
+		adc = 0;
+		break;
+	}
+	float volt = (float) adc / (float) ADC_REFRES * 5.0 /* Volt */;
+	return volt / resistor;
+}
