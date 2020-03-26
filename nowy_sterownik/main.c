@@ -46,7 +46,7 @@ void uart_process(void)
 	if (uart_send_timer < mktime.ms)
 	{
 		pnt = &send_value;
-		send_value = errorGetMotorVal();
+		send_value = (uint16_t)errorGetMotorVal();
 		uart_putc(255);
 		uart_putc(pnt[0]);
 		uart_putc(pnt[1]);
@@ -96,6 +96,9 @@ int main(void)
 	sei();
 	init_driver();
 	debug_msg("/-----------START SYSTEM------------/\n");
+	#if CONFIG_DEVICE_SIEWNIK
+	measure_get_servo_calibration();
+	#endif
     /* Replace with your application code */
     while (1) 
     {

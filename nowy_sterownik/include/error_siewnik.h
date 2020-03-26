@@ -31,7 +31,7 @@ typedef enum
 }err_servo_t;
 
 void error_event(void);
-uint16_t errorGetMotorVal(void);
+float errorGetMotorVal(void);
 void error_init(void);
 void error_deinit(void);
 void error_led_blink(void);

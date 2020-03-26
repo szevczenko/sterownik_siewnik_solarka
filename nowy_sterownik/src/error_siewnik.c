@@ -8,6 +8,7 @@
 #include "servo.h"
 #include "buz.h"
 #include "display_d.h"
+#include "math.h"
 
 #if CONFIG_DEVICE_SIEWNIK
 ///////////////////////////////////////
@@ -15,7 +16,7 @@
 int get_calibration_value(uint8_t type);
 int get_disp_value(uint8_t type);
 static void set_error_state(error_reason_ reason);
-static uint16_t count_motor_error_value(uint16_t x);
+static float count_motor_error_value(uint16_t x, float volt_accum);
 static uint16_t count_motor_timeout_wait(uint16_t x);
 static uint16_t count_motor_timeout_axelerate(uint16_t x);
 static uint16_t count_servo_error_value(void);
@@ -30,7 +31,7 @@ static evTime motor_timer;
 static err_motor_t error_motor_state;
 static err_motor_t error_motor_last_state;
 static uint8_t error_motor_status;
-static uint16_t motor_error_value;
+static float motor_error_value;
 
 //////////////////////////////////
 //SERVO
@@ -65,7 +66,7 @@ void error_deinit(void)
 
 #define RESISTOR 1
 
-uint16_t errorGetMotorVal(void)
+float errorGetMotorVal(void)
 {
 	return motor_error_value;
 }
@@ -79,14 +80,12 @@ void error_event(void)
 		if (system_events&(1<<EV_SYSTEM_ERROR_MOTOR)) return;
 		///////////////////////////////////////////////////////////////////////////////////////////
 		//MOTOR
-		
-		motor_error_value = count_motor_error_value(dcmotor_get_pwm());
-		uint16_t motor_adc_filterd = measure_get_filtered_value(MEAS_MOTOR);
-		uint16_t motor_adc_no = measure_get_value(MEAS_MOTOR);
-		float current = measure_get_current(MEAS_MOTOR, MOTOR_RESISTOR);
 		float volt = accum_get_voltage();
-		debug_msg("MOTOR ADC: %d, ADC_max: %d, ADC_no_filter: %d, current: %f\n", motor_adc_filterd, motor_error_value, motor_adc_no, current);
-		if (motor_adc_filterd > motor_error_value) //servo_vibro_value*5
+		motor_error_value = count_motor_error_value(dcmotor_get_pwm(), volt);
+		uint16_t motor_adc_filterd = measure_get_filtered_value(MEAS_MOTOR);
+		float current = measure_get_current(MEAS_MOTOR, MOTOR_RESISTOR);
+		debug_msg("MOTOR ADC: %d, current_max: %f, current: %f\n", motor_adc_filterd, motor_error_value, current);
+		if (current > motor_error_value && dcmotor_is_on()) //servo_vibro_value*5
 		{
 			error_motor_status = 1;
 		}
@@ -285,29 +284,24 @@ int get_calibration_value(uint8_t type)
 	return 100;
 }
 
+#define REZYSTANCJA_WIRNIKA 3
 
-static uint16_t count_motor_error_value(uint16_t x)
+static float count_motor_error_value(uint16_t x, float volt_accum)
 {
-	uint16_t error_max_voltage;
-	float voltage = accum_get_voltage();
-	if (voltage < 9) voltage = 9;
-	if (x >=10 && x < 15)
-	error_max_voltage = 2*x-15 + (voltage-9)*x/6;
-	else if (x >=15 && x < 25)
-	error_max_voltage = 2*x-20 + (voltage-9)*x/6;
-	else if (x >=25 && x < 40)
-	error_max_voltage = 2*x-25 + (voltage-9)*x/6;
-	else if (x >=40 && x < 50)
-	error_max_voltage = 2*x-10 + (voltage-9)*x/6;
-	else if (x >=50 && x < 70)
-	error_max_voltage = 2*x+10 + (voltage-9)*x/6;
-	else if (x >= 70)
-	error_max_voltage = 2*x+20 + (voltage-9)*x/6;
-	else
-	error_max_voltage = 10;
+	float volt_in_motor = volt_accum * x/100;
+	float volt_in_motor_nominal = 14.2 * x/100;
+	float temp = 0.011*pow(x, 1.6281) + (volt_in_motor - volt_in_motor_nominal)/REZYSTANCJA_WIRNIKA;
+	/* Jak chcesz dobrac parametry mozesz dla testu odkomentowac linijke nizej debug_msg()
+		Funkcja zwraca prad maksymalny
+		x						- wartosc na wyswietlaczu PWM
+		volt					- napiecie akumulatora
+		0.011*pow(x, 1.6281)	- zalezosc wedlug twoich pomiarow wyznaczona w excel
+		volt_in_motor			- napiecie podawane na silnik obecnie przeskalowane wedlug PWM
+		volt_in_motor_nominal	- napiecie przy ktorym wykonane pomiary (14,2 V) przeskalowane wedlug PWM
+		*/
 	
-	error_max_voltage = error_max_voltage + get_calibration_value(0);
-	return error_max_voltage;
+	//debug_msg("CURRENT volt_in: %d, volt_nominal: %f, out_value: %f\n", volt_in_motor, volt_in_motor_nominal, temp);
+	return temp;
 }
 
 static uint16_t count_motor_timeout_wait(uint16_t x)

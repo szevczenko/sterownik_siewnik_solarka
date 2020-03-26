@@ -3,8 +3,8 @@
 #include "config.h"
 #include "adc.h"
 
-
-#define SERVO_CALIBRATION_VALUE 600
+//600
+#define SERVO_CALIBRATION_VALUE calibration_value 
 
 ////////////////////////////////////////////////
 /// ACCUM
@@ -26,6 +26,25 @@ static uint16_t s_o_t_filter_value;
 static uint16_t s_o_t_f_table[FILTER_TABLE_S_SIZE];
 static uint8_t s_o_t_iteration_adc_table = 0;
 static uint16_t s_o_t_adc;
+
+#if CONFIG_DEVICE_SIEWNIK
+static uint16_t calibration_value;
+void measure_get_servo_calibration(void)
+{
+	timer_t calibration_timer = 0;
+	calibration_timer = mktime.ms + 1000;
+	while(1)
+	{
+		measure_process();
+		if (calibration_timer < mktime.ms)
+		{
+			calibration_value = measure_get_filtered_value(MEAS_SERVO);
+			debug_msg("MEASURE SERVO Calibration value = %d\n", calibration_value);
+			break;
+		}
+	}
+}
+#endif
 
 static uint16_t filtered_value(uint16_t *tab, uint8_t size)
 {
@@ -53,11 +72,12 @@ void init_measure(void)
 	}
 }
 static timer_t measure_timer;
+static uint32_t debug_msg_counter;
 void measure_process(void)
 {
 	if (measure_timer < mktime.ms)
 	{
-		measure_timer = mktime.ms + 500;
+		measure_timer = mktime.ms + 20;
 		accum_adc = adc_read(ACCUMULATOR_ADC_CH); 
 		#if CONFIG_DEVICE_SOLARKA
 		#endif
@@ -86,7 +106,9 @@ void measure_process(void)
 		filtered_accum_adc_val = filtered_value(accumulator_tab, ACCUMULATOR_SIZE_TAB);
 		motor_filter_value = filtered_value(motor_f_table, FILTER_TABLE_SIZE);
 		s_o_t_filter_value = filtered_value(s_o_t_f_table, FILTER_TABLE_S_SIZE);
-		debug_msg("ADC_not filtered: accum %d, servo %d, motor %d\n",accum_adc, s_o_t_adc, motor_adc);
+		if (debug_msg_counter%80 == 0)
+			debug_msg("ADC_not filtered: accum %d, servo %d, motor %d\n",accum_adc, s_o_t_adc, motor_adc);
+		debug_msg_counter++;
 		
 		if (iteration_adc_accum_table == ACCUMULATOR_SIZE_TAB) iteration_adc_accum_table = 0;
 		if (s_o_t_iteration_adc_table == FILTER_TABLE_S_SIZE) s_o_t_iteration_adc_table = 0;
