@@ -41,6 +41,7 @@ void on_animation(uint32_t time, _disp_type type);
 void display_set_error(error_reason_ reason);
 void display_set_blink(_disp_type type, uint32_t blink_count, uint8_t blink_val);
 void disp_disable_voltage(void);
+void disp_off_segments(void);
 
 //////////////////////////////////
 //PROCESSES

@@ -72,6 +72,7 @@ extern int dcmotor_is_on(void);
 void dcmotor_process(uint8_t value);
 void dcmotor_set_error(void);
 int dcmotor_set_try(void);
+int dcmotor_set_normal_state(void);
 int dcmotor_get_pwm(void);
 void dcmotorpwm_goforward(uint8_t vel);
 void dcmotorpwm_gobackward(uint8_t vel);

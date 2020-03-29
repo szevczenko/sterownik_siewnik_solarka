@@ -9,6 +9,7 @@
 #include "buz.h"
 #include "display_d.h"
 #include "math.h"
+#include "dark_menu.h"
 
 #if CONFIG_DEVICE_SIEWNIK
 ///////////////////////////////////////
@@ -84,7 +85,7 @@ void error_event(void)
 		motor_error_value = count_motor_error_value(dcmotor_get_pwm(), volt);
 		uint16_t motor_adc_filterd = measure_get_filtered_value(MEAS_MOTOR);
 		float current = measure_get_current(MEAS_MOTOR, MOTOR_RESISTOR);
-		debug_msg("MOTOR ADC: %d, current_max: %f, current: %f\n", motor_adc_filterd, motor_error_value, current);
+		//debug_msg("MOTOR ADC: %d, current_max: %f, current: %f\n", motor_adc_filterd, motor_error_value, current);
 		if (current > motor_error_value && dcmotor_is_on()) //servo_vibro_value*5
 		{
 			error_motor_status = 1;
@@ -93,160 +94,165 @@ void error_event(void)
 		{
 			error_motor_status = 0;
 		}
-		#if CONFIG_USE_ERROR_MOTOR
-		if (error_motor_status == 1)
-		{
-			switch(error_motor_state)
+		if (menu_param.disable_error == 1) {
+			#if CONFIG_USE_ERROR_MOTOR
+			if (error_motor_status == 1)
 			{
-				case ERR_M_OK:
-					error_motor_state = ERR_M_WAIT;
-					debug_msg("ERROR STATUS: ERR_M_WAIT\n\r");
-					evTime_start(&motor_timer, count_motor_timeout_wait(dcmotor_get_pwm()));
-				break;
-				case ERR_M_WAIT:
-					if (evTime_check(&motor_timer))
-					{
-						dcmotor_set_try();
-						evTime_start(&motor_timer, count_motor_timeout_axelerate(dcmotor_get_pwm()));
-						error_motor_state = ERR_M_AXELERATE;
-						debug_msg("ERROR STATUS: ERR_M_AXELERATE\n\r");
-					}
-				break;
-				case ERR_M_AXELERATE:
-					if (evTime_check(&motor_timer))
-					{
-						error_motor_state = ERR_M_ERROR;
-						debug_msg("ERROR STATUS: ERR_M_ERROR\n\r");
-					}
-				break;
-				case ERR_M_ERROR:
-					set_error_state(ERR_REASON_MOTOR);
-				break;
-				case ERR_M_EXIT:
+				switch(error_motor_state)
+				{
+					case ERR_M_OK:
+						error_motor_state = ERR_M_WAIT;
+						debug_msg("ERROR STATUS: ERR_M_WAIT\n\r");
+						evTime_start(&motor_timer, count_motor_timeout_wait(dcmotor_get_pwm()));
+					break;
+					case ERR_M_WAIT:
+						if (evTime_check(&motor_timer))
+						{
+							dcmotor_set_try();
+							evTime_start(&motor_timer, count_motor_timeout_axelerate(dcmotor_get_pwm()));
+							error_motor_state = ERR_M_AXELERATE;
+							debug_msg("ERROR STATUS: ERR_M_AXELERATE\n\r");
+						}
+					break;
+					case ERR_M_AXELERATE:
+						if (evTime_check(&motor_timer))
+						{
+							error_motor_state = ERR_M_ERROR;
+							debug_msg("ERROR STATUS: ERR_M_ERROR\n\r");
+						}
+					break;
+					case ERR_M_ERROR:
+						set_error_state(ERR_REASON_MOTOR);
+					break;
+					case ERR_M_EXIT:
+						if (evTime_check(&motor_timer))
+						{
+							evTime_start(&motor_timer, ERROR_M_TIME_EXIT);
+							error_motor_state = error_motor_last_state;
+							debug_msg("ERROR STATUS: go to last before wait\n\r");
+						}
+					break;
+				}
+			}
+			else
+			{
+				//toDo
+				switch(error_motor_state)
+				{
+					case ERR_M_OK:
+					break;
+					case ERR_M_WAIT:
 					if (evTime_check(&motor_timer))
 					{
 						evTime_start(&motor_timer, ERROR_M_TIME_EXIT);
-						error_motor_state = error_motor_last_state;
-						debug_msg("ERROR STATUS: go to last before wait\n\r");
+						error_motor_state = ERR_M_EXIT;
+						error_motor_last_state = ERR_M_WAIT;
+						debug_msg("ERROR STATUS: ERR_M_EXIT\n\r");
 					}
-				break;
+					break;
+					case ERR_M_AXELERATE:
+					if (evTime_check(&motor_timer))
+					{
+						evTime_start(&motor_timer, ERROR_M_TIME_EXIT);
+						dcmotor_set_normal_state();
+						error_motor_state = ERR_M_EXIT;
+						error_motor_last_state = ERR_M_AXELERATE;
+						debug_msg("ERROR STATUS: ERR_M_EXIT\n\r");
+					}
+					break;
+					case ERR_M_ERROR:
+						set_error_state(ERR_REASON_MOTOR);
+					break;
+					case ERR_M_EXIT:
+					if (evTime_check(&motor_timer))
+					{
+						debug_msg("ERROR STATUS: ERR_M_OK\n\r");
+						error_motor_state = ERR_M_OK;
+					}
+					break;
+				}
 			}
-		}
-		else
-		{
-			//toDo
-			switch(error_motor_state)
-			{
-				case ERR_M_OK:
-				break;
-				case ERR_M_WAIT:
-				if (evTime_check(&motor_timer))
-				{
-					evTime_start(&motor_timer, ERROR_M_TIME_EXIT);
-					error_motor_state = ERR_M_EXIT;
-					error_motor_last_state = ERR_M_WAIT;
-					debug_msg("ERROR STATUS: ERR_M_EXIT\n\r");
-				}
-				break;
-				case ERR_M_AXELERATE:
-				if (evTime_check(&motor_timer))
-				{
-					evTime_start(&motor_timer, ERROR_M_TIME_EXIT);
-					error_motor_state = ERR_M_EXIT;
-					error_motor_last_state = ERR_M_AXELERATE;
-					debug_msg("ERROR STATUS: ERR_M_EXIT\n\r");
-				}
-				break;
-				case ERR_M_ERROR:
-					set_error_state(ERR_REASON_MOTOR);
-				break;
-				case ERR_M_EXIT:
-				if (evTime_check(&motor_timer))
-				{
-					debug_msg("ERROR STATUS: ERR_M_OK\n\r");
-					error_motor_state = ERR_M_OK;
-				}
-				break;
-			}
-		}
-		#endif
+			#endif
+		} /* Disable error */
 		//////////////////////////////////////////////////////////////////////////////////////
 		// SERVO
-		#if CONFIG_USE_ERROR_SERVO
-		servo_error_value = count_servo_error_value();
-		if (measure_get_filtered_value(MEAS_SERVO) > servo_error_value) //servo_vibro_value*5
-		{
-			debug_msg("servo_error_value: %d\n", servo_error_value);
-			error_servo_status = 1;
-		}
-		else
-		{
-			error_servo_status = 0;
-		}
-		
-		if (error_servo_status == 1)
-		{
-			switch(error_servo_state)
+		if (menu_param.disable_error == 1) {
+			#if CONFIG_USE_ERROR_SERVO
+			servo_error_value = count_servo_error_value();
+			if (measure_get_filtered_value(MEAS_SERVO) > servo_error_value) //servo_vibro_value*5
 			{
-				case ERR_S_OK:
-					error_servo_state = ERR_S_WAIT;
-					debug_msg("ERROR STATUS: ERR_S_WAIT\n\r");
-					evTime_start(&servo_timer, SERVO_WAIT_TO_TRY);
-				break;
-				case ERR_S_WAIT:
+				debug_msg("servo_error_value: %d\n", servo_error_value);
+				error_servo_status = 1;
+			}
+			else
+			{
+				error_servo_status = 0;
+			}
+		
+			if (error_servo_status == 1)
+			{
+				switch(error_servo_state)
+				{
+					case ERR_S_OK:
+						error_servo_state = ERR_S_WAIT;
+						debug_msg("ERROR STATUS: ERR_S_WAIT\n\r");
+						evTime_start(&servo_timer, SERVO_WAIT_TO_TRY);
+					break;
+					case ERR_S_WAIT:
+						if (evTime_check(&servo_timer))
+						{
+							if (servo_get_try_cnt() > SERVO_TRY_CNT)
+							{
+								error_servo_state = ERR_S_ERROR;
+								break;
+							}
+							evTime_start(&servo_timer, SERVO_WAIT_AFTER_TRY);
+							error_servo_state = ERR_S_TRY;
+							servo_enable_try();
+							debug_msg("ERROR STATUS: ERR_S_TRY\n\r");
+						}
+					break;
+					case ERR_S_TRY:
+						if (evTime_check(&servo_timer))
+						{
+							error_servo_state = ERR_S_OK;
+						}
+					break;
+					case ERR_S_ERROR:
+						set_error_state(ERR_REASON_SERVO);
+					break;
+				} //switch
+			}// if (error_servo_status == 1)
+			else
+			{
+				//toDo
+				switch(error_servo_state)
+				{
+					case ERR_S_OK:
+					break;
+					case ERR_S_WAIT:
 					if (evTime_check(&servo_timer))
 					{
-						if (servo_get_try_cnt() > SERVO_TRY_CNT)
-						{
-							error_servo_state = ERR_S_ERROR;
-							break;
-						}
-						evTime_start(&servo_timer, SERVO_WAIT_AFTER_TRY);
-						error_servo_state = ERR_S_TRY;
-						servo_enable_try();
-						debug_msg("ERROR STATUS: ERR_S_TRY\n\r");
+						evTime_start(&servo_timer, ERROR_M_TIME_EXIT);
+						error_servo_state = ERR_M_OK;
+						debug_msg("ERROR STATUS: ERR_S_OK\n\r");
 					}
-				break;
-				case ERR_S_TRY:
+					break;
+					case ERR_S_TRY:
 					if (evTime_check(&servo_timer))
 					{
 						error_servo_state = ERR_S_OK;
+						debug_msg("ERROR STATUS: ERR_S_OK\n\r");
 					}
-				break;
-				case ERR_S_ERROR:
-					set_error_state(ERR_REASON_SERVO);
-				break;
-			} //switch
-		}// if (error_servo_status == 1)
-		else
-		{
-			//toDo
-			switch(error_servo_state)
-			{
-				case ERR_S_OK:
-				break;
-				case ERR_S_WAIT:
-				if (evTime_check(&servo_timer))
-				{
-					evTime_start(&servo_timer, ERROR_M_TIME_EXIT);
-					error_servo_state = ERR_M_OK;
-					debug_msg("ERROR STATUS: ERR_S_OK\n\r");
-				}
-				break;
-				case ERR_S_TRY:
-				if (evTime_check(&servo_timer))
-				{
-					error_servo_state = ERR_S_OK;
-					debug_msg("ERROR STATUS: ERR_S_OK\n\r");
-				}
-				break;
-				break;
-				case ERR_S_ERROR:
-					set_error_state(ERR_REASON_SERVO);
-				break;
-			} //switch
-		} //else (error_servo_status == 1)
-		#endif
+					break;
+					break;
+					case ERR_S_ERROR:
+						set_error_state(ERR_REASON_SERVO);
+					break;
+				} //switch
+			} //else (error_servo_status == 1)
+			#endif
+		} /* Disable error */
 	} //error_event_timer
 }
 
@@ -291,6 +297,9 @@ static float count_motor_error_value(uint16_t x, float volt_accum)
 	float volt_in_motor = volt_accum * x/100;
 	float volt_in_motor_nominal = 14.2 * x/100;
 	float temp = 0.011*pow(x, 1.6281) + (volt_in_motor - volt_in_motor_nominal)/REZYSTANCJA_WIRNIKA;
+	#if DARK_MENU
+	temp = (float)(menu_param.motor_add - 50) * x/100 + temp;
+	#endif
 	/* Jak chcesz dobrac parametry mozesz dla testu odkomentowac linijke nizej debug_msg()
 		Funkcja zwraca prad maksymalny
 		x						- wartosc na wyswietlaczu PWM
@@ -320,6 +329,10 @@ static uint16_t count_motor_timeout_axelerate(uint16_t x)
 
 static uint16_t count_servo_error_value(void)
 {
+	#if DARK_MENU
+	return 100 + (menu_param.motor_add - 50);
+	#else
 	return 100;
+	#endif
 }
 #endif

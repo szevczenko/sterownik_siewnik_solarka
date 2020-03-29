@@ -32,7 +32,7 @@ static uint16_t calibration_value;
 void measure_get_servo_calibration(void)
 {
 	timer_t calibration_timer = 0;
-	calibration_timer = mktime.ms + 1000;
+	calibration_timer = mktime.ms + 1500;
 	while(1)
 	{
 		measure_process();
@@ -96,8 +96,8 @@ void measure_process(void)
 		s_o_t_adc = adc_read(SERVO_ADC_CH);
 		
 		#if CONFIG_DEVICE_SIEWNIK
-		if (s_o_t_adc < SERVO_CALIBRATION_VALUE) s_o_t_adc = 0;
-		else s_o_t_adc = s_o_t_adc - SERVO_CALIBRATION_VALUE;
+		if (s_o_t_adc > SERVO_CALIBRATION_VALUE) s_o_t_adc = 0;
+		else s_o_t_adc = SERVO_CALIBRATION_VALUE - s_o_t_adc;
 		#endif
 
 		s_o_t_f_table[s_o_t_iteration_adc_table] = s_o_t_adc;

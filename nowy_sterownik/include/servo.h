@@ -53,6 +53,7 @@ int servo_open(uint8_t value);
 int servo_is_open(void);
 void servo_try_reset_timeout(uint32_t time_ms);
 int servo_delayed_open(uint8_t value);
+int servo_get_try_cnt(void);
 
 #endif
 

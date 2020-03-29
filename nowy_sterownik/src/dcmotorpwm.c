@@ -158,6 +158,16 @@ int dcmotor_set_try(void)
 	return 0;
 }
 
+int dcmotor_set_normal_state(void)
+{
+	if (dcmotor_is_on())
+	{
+		motorD.state = MOTOR_ON;
+		return 1;
+	}
+	return 0;
+}
+
 void dcmotor_process(uint8_t value)
 {
 	static evTime dcmotor_timer;

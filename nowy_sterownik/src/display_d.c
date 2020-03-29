@@ -186,6 +186,14 @@ void display_set_blink(_disp_type type, uint32_t blink_count, uint8_t blink_val)
 	if (blink_state == 0) disp_set_number(&segment2, second_disp_blink_val);
 }
 
+void disp_off_segments(void)
+{
+	disp_set_symb(&DispD1, SYMBOL_DISP_OFF);
+	disp_set_symb(&DispD2, SYMBOL_DISP_OFF);
+	disp_set_symb(&DispD3, SYMBOL_DISP_OFF);
+	disp_set_symb(&DispD4, SYMBOL_DISP_OFF);
+}
+
 
 void disp_process(void)
 {
