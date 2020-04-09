@@ -35,7 +35,7 @@ void mem_save_data(_type_data param, void *data)
         case MEM_CALIBRATION:
         offset = 4*sizeof(mem_program);
 		#if DARK_MENU
-		len = dark_menu_parameters_len();
+		len = sizeof(menuSaveParameters);
 		#else
 		len = 0;
 		#endif
@@ -78,11 +78,7 @@ void mem_read_data(_type_data param, void *data)
 		break;
         case MEM_CALIBRATION:
         offset = 4*sizeof(mem_program);
-        #if DARK_MENU
-        len = dark_menu_parameters_len();
-        #else
-        len = 0;
-        #endif
+        len = sizeof(menuSaveParameters);
         break;
         default:
         return;

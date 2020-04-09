@@ -12,7 +12,7 @@ src/buz.d src/buz.o: ../src/buz.c ../include/config.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\lock.h \
  ../include/tim.h ../include/config.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\interrupt.h \
- ../include/buz.h ../include/tim.h ../include/dark_menu.h
+ ../include/buz.h ../include/tim.h
 
 ../include/config.h:
 
@@ -47,5 +47,3 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\
 ../include/buz.h:
 
 ../include/tim.h:
-
-../include/dark_menu.h:

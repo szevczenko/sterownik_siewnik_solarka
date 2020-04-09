@@ -11,7 +11,6 @@
 
 #include "buz.h"
 #include "tim.h"
-#include "dark_menu.h"
 
 timer_t buzzer_timer = 0;
 timer_t buzzer_state = 0;
@@ -20,23 +19,18 @@ void buzzer_process(void)
 {
 	if (buzzer_timer < mktime.ms)
 	{
-		#if CONFIG_DEVICE_SIEWNIK && DARK_MENU
-		if (dark_menu_get_value(MENU_BUZZER) == 0)
-		#endif
+		if (system_events&(1<<EV_ON_BUZZER) && buzzer_state==0)
 		{
-			if (system_events&(1<<EV_ON_BUZZER) && buzzer_state==0)
-			{
-				ON_BUZZER;
-				CLEAR_PIN(system_events, EV_ON_BUZZER);
-				buzzer_state = 1;
-				buzzer_timer += 100;
-			}
-			else
-			{
-				OFF_BUZZER;
-				buzzer_state = 0;
-				buzzer_timer += 50;
-			}
+			ON_BUZZER;
+			CLEAR_PIN(system_events, EV_ON_BUZZER);
+			buzzer_state = 1;
+			buzzer_timer += 100;
+		}
+		else
+		{
+			OFF_BUZZER;
+			buzzer_state = 0;
+			buzzer_timer += 50;
 		}
 	}
 }
