@@ -97,6 +97,7 @@ void measure_process(void)
 		
 		#if CONFIG_DEVICE_SIEWNIK
 		if (s_o_t_adc > SERVO_CALIBRATION_VALUE) s_o_t_adc = 0;
+		else
 			s_o_t_adc = SERVO_CALIBRATION_VALUE - s_o_t_adc;
 		#endif
 
