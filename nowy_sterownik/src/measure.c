@@ -96,7 +96,8 @@ void measure_process(void)
 		s_o_t_adc = adc_read(SERVO_ADC_CH);
 		
 		#if CONFIG_DEVICE_SIEWNIK
-		s_o_t_adc = SERVO_CALIBRATION_VALUE - s_o_t_adc;
+		if (s_o_t_adc <= SERVO_CALIBRATION_VALUE) 
+			s_o_t_adc = SERVO_CALIBRATION_VALUE - s_o_t_adc;
 		#endif
 
 		s_o_t_f_table[s_o_t_iteration_adc_table] = s_o_t_adc;
