@@ -33,7 +33,7 @@ void mem_save_data(_type_data param, void *data)
 		break;
         case MEM_CALIBRATION:
         offset = 4*sizeof(mem_program);
-        len = sizeof(mem_calibration);
+        len = sizeof(menuSaveParameters);
         break;
         default:
         return;
@@ -73,7 +73,7 @@ void mem_read_data(_type_data param, void *data)
 		break;
         case MEM_CALIBRATION:
         offset = 4*sizeof(mem_program);
-        len = sizeof(mem_calibration);
+        len = sizeof(menuSaveParameters);
         break;
         default:
         return;

@@ -12,7 +12,8 @@ src/system.d src/system.o: ../src/system.c ../include/config.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\lock.h \
  ../include/tim.h ../include/config.h ../include/display_d.h \
  ../include/disp.h ../include/system.h ../include/dcmotorpwm.h \
- ../include/mem.h ../include/vibro.h ../include/servo.h ../include/buz.h \
+ ../include/mem.h ../include/dark_menu.h ../include/vibro.h \
+ ../include/servo.h ../include/buz.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\interrupt.h \
  ../include/accumulator.h ../include/measure.h ../include/system.h \
  ../include/but.h ../include/error_siewnik.h ../include/error_solarka.h
@@ -54,6 +55,8 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\
 ../include/dcmotorpwm.h:
 
 ../include/mem.h:
+
+../include/dark_menu.h:
 
 ../include/vibro.h:
 

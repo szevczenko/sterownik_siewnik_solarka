@@ -1,19 +1,13 @@
 #ifndef _MEM_H
 #define _MEM_H
 #include "stdint.h"
+#include "dark_menu.h"
 
 typedef struct
 {
 	uint8_t first_disp_val;
 	uint8_t second_disp_val;
 }mem_program;
-
-typedef struct  
-{
-	uint8_t motor_add;
-	uint8_t servo_add;
-	uint8_t disable_error;
-}mem_calibration;
 
 typedef enum
 {
