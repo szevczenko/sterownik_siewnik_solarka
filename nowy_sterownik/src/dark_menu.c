@@ -19,24 +19,27 @@
 #include "display_d.h"
 #include "mem.h"
 
-static uint8_t last_button;
-uint8_t state_menu;
-menu_t menu_param;
-#define MENU_ADDR 12
-
-const uint8_t password[] = {1,0,3,5,4,7};
+/*
+ * Dla zmiany hasla wejscia do dark_menu edytowac password[]
+ */
+const uint8_t password[] = {1,0,2,4,3,5};
 uint8_t pass[sizeof(password)];
 uint8_t pass_len;
 uint8_t dark_menu_state;
 uint8_t configured_parameter;
 menuPStruct_t menuParameters[] = 
 {
-	[MENU_ERROR_SERVO] = {.max_value = 1, .default_value =0},
-	[MENU_ERROR_MOTOR] = {.max_value = 1, .default_value =0},
+	[MENU_ERROR_SERVO] = {.max_value = 1, .default_value = 0},
+	[MENU_ERROR_MOTOR] = {.max_value = 1, .default_value = 0},
 	[MENU_ERROR_SERVO_CALIBRATION] = {.max_value = 99, .default_value = 50},
 	[MENU_ERROR_MOTOR_CALIBRATION] = {.max_value = 99, .default_value = 50},
 };
 uint8_t menuSaveParameters[4];
+
+uint8_t dark_menu_parameters_len(void)
+{
+	return sizeof(menuSaveParameters);
+}
 
 static void enter_to_menu(void);
 
@@ -45,21 +48,35 @@ static void save_parametrs(void)
 	mem_save_data(MEM_CALIBRATION, menuSaveParameters);
 }
 
-void read_menu_parametrs(void)
+static void read_menu_parametrs(void)
 {
 	mem_read_data(MEM_CALIBRATION, menuSaveParameters);
-	debug_msg("menu_read %d %d %d %d\n\r", menuSaveParameters[0], menuSaveParameters[1], menuSaveParameters[2], menuSaveParameters[3],  )
+	debug_msg("menu_read %d %d %d %d\n\r", menuSaveParameters[0], menuSaveParameters[1], menuSaveParameters[2], menuSaveParameters[3]);
 }
 
 //powinno byc uruchomiane po wczytaniu z EEPROAM
-void check_menu_parameters(void)
+static void check_menu_parameters(void)
 {
+	uint8_t check_error = 0;
 	for(uint8_t i = 0; i < sizeof(menuSaveParameters); i++)
 	{
 		if (menuSaveParameters[i] > menuParameters[i].max_value)
 		{
 			menuSaveParameters[i] = menuParameters[i].default_value;
+			check_error++;
 		}
+	}
+	if (check_error > 0)
+	{
+		save_parametrs();
+	}
+}
+
+static void set_default_parameters(void)
+{
+	for(uint8_t i = 0; i < sizeof(menuSaveParameters); i++)
+	{
+		menuSaveParameters[i] = menuParameters[i].default_value;
 	}
 }
 
@@ -69,55 +86,66 @@ static void clear_password(void)
 	memset(pass, 0, sizeof(pass));
 }
 
-void pass_add_number(uint8_t number)
+static void pass_add_number(uint8_t number)
 {
 	pass[pass_len++] = number;
+	debug_msg("pass %d\n", number);
 	if (memcmp(pass, password, pass_len) != 0) {
+		debug_msg("clear_password\n");
 		clear_password();
 		return;
 	}
 	if (pass_len == sizeof(pass)) {
+		debug_msg("enter_to_menu\n");
 		enter_to_menu();
 	}
 }
 
-void button_1_number(void *pv)
+static void button_1_number(void *pv)
 {
 	pass_add_number(0);
 }
 
-void button_2_number(void *pv)
+static void button_2_number(void *pv)
 {
 	pass_add_number(1);
 }
-void button_3_number(void *pv)
+static void button_3_number(void *pv)
 {
 	pass_add_number(2);
 }
-void button_5_number(void *pv)
+static void button_5_number(void *pv)
 {
 	pass_add_number(3);
 }
-void button_6_number(void *pv)
+static void button_6_number(void *pv)
 {
 	pass_add_number(4);
 }
-void button_7_number(void *pv)
+static void button_7_number(void *pv)
 {
 	pass_add_number(5);
 }
 
-void button_1_menu(void *pv)
+static void button_debug_msg(void)
+{
+	debug_msg("conf: %d\n", configured_parameter);
+	debug_msg("menu after check %d %d %d %d\n\r", menuSaveParameters[0], menuSaveParameters[1], menuSaveParameters[2], menuSaveParameters[3]);
+}
+
+static void button_1_menu(void *pv) 
 {
 	if (configured_parameter > 0)
 		configured_parameter--;
+	button_debug_msg();
 }
-void button_2_menu(void *pv)
+static void button_2_menu(void *pv)
 {
-	if (configured_parameter < sizeof(menuSaveParameters))
+	if (configured_parameter < sizeof(menuSaveParameters) - 1)
 		configured_parameter++;
+	button_debug_msg();
 }
-void button_3_menu(void *pv)
+static void button_3_menu(void *pv)
 {
 	save_parametrs();
 	segment1.state = SEG_MENU_SAVE; 
@@ -126,40 +154,21 @@ void button_3_menu(void *pv)
 	LED_SERVO_OFF;
 }
 
-void button_5_menu(void *pv)
+static void button_5_menu(void *pv)
 {
-	if (configured_parameter > 0)
+	if (menuSaveParameters[configured_parameter] > 0)
 		menuSaveParameters[configured_parameter]--;
+	button_debug_msg();
 }
-void button_6_menu(void *pv)
+static void button_6_menu(void *pv)
 {
-	if (configured_parameter < menuParameters[configured_parameter].max_value)
+	if (menuSaveParameters[configured_parameter] < menuParameters[configured_parameter].max_value)
 		menuSaveParameters[configured_parameter]++;
+	button_debug_msg();
 }
-void button_7_menu(void *pv)
+static void button_7_menu(void *pv)
 {	
-	if (state_menu == 1 && menu_param.disable_error == 0)
-	{
-		menu_param.disable_error = 1;
-		LED_SERVO_OFF;
-	}
-	else if (state_menu == 1 && menu_param.disable_error == 1)
-	{
-		menu_param.disable_error = 0;
-		LED_SERVO_ON;
-	}
-}
-void button_8_menu(void *pv)
-{
-	
-}
-void button_9_menu(void *pv)
-{
-	
-}
-void button_10_menu(void *pv)
-{
-	
+	set_default_parameters();
 }
 
 void menu_process(void)
@@ -167,6 +176,7 @@ void menu_process(void)
 	static timer_t menu_timer;
 	if (menu_timer < mktime.ms && dark_menu_state == 1)
 	{
+		menu_timer = mktime.ms + 50;
 		if (segment1.state == SEG_MENU)
 			disp_set_number(&segment1, configured_parameter);
 		if (segment2.state == SEG_MENU)
@@ -189,7 +199,7 @@ void menu_process(void)
 		{
 			segment1.state = SEG_OFF;
 			segment2.state = SEG_OFF;
-			state_menu = 0;
+			dark_menu_state = 0;
 		}
 	}
 }
@@ -204,9 +214,15 @@ void init_menu(void)
 	button7.fall_callback = button_7_number;
 	read_menu_parametrs();
 	check_menu_parameters();
-	if (menu_param.motor_add > 99) menu_param.motor_add = 0;
-	if (menu_param.servo_add > 99) menu_param.servo_add = 0;
-	if (menu_param.disable_error > 1) menu_param.disable_error = 0;
+	clear_password();
+}
+
+uint8_t dark_menu_get_value(menuParam_t param)
+{
+	if (param < MENU_ERROR_LAST_PARAM) {
+		return menuSaveParameters[param];
+	}
+	return 0;
 }
 
 static void enter_to_menu(void)
@@ -218,9 +234,6 @@ static void enter_to_menu(void)
 	button5.fall_callback = button_5_menu;
 	button6.fall_callback = button_6_menu;
 	button7.fall_callback = button_7_menu;
-	button8.fall_callback = button_8_menu;
-	button9.fall_callback = button_9_menu;
-	button10.fall_callback = button_10_menu;
 	disp_set_state(DISP_ALL, SEG_MENU);
 }
 

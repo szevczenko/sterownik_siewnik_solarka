@@ -132,8 +132,11 @@ void off_system(void)
 	off_button();
 	error_deinit();
 	#if CONFIG_DEVICE_SIEWNIK
+	#if DARK_MENU
+	init_menu();
+	#endif /* DARK_MENU */
 	servo_close();
-	#endif
+	#endif /* CONFIG_DEVICE_SIEWNIK */
 	#if CONFIG_DEVICE_SOLARKA
 	vibro_deInit();
 	#endif

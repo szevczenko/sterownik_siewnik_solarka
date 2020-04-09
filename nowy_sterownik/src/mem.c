@@ -2,6 +2,7 @@
 #include "eeprom.h"
 #include "mem.h"
 #include "config.h"
+#include "dark_menu.h"
 
 #ifndef DEBUG_MEM
 #define DEBUG_MEM (void)
@@ -33,7 +34,11 @@ void mem_save_data(_type_data param, void *data)
 		break;
         case MEM_CALIBRATION:
         offset = 4*sizeof(mem_program);
-        len = sizeof(menuSaveParameters);
+		#if DARK_MENU
+		len = sizeof(menuSaveParameters);
+		#else
+		len = 0;
+		#endif
         break;
         default:
         return;

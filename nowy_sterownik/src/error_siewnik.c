@@ -94,7 +94,10 @@ void error_event(void)
 		{
 			error_motor_status = 0;
 		}
-		if (menu_param.disable_error == 1) {
+		#if DARK_MENU
+		if (dark_menu_get_value(MENU_ERROR_MOTOR) == 0)
+		#endif
+		{
 			#if CONFIG_USE_ERROR_MOTOR
 			if (error_motor_status == 1)
 			{
@@ -176,7 +179,10 @@ void error_event(void)
 		} /* Disable error */
 		//////////////////////////////////////////////////////////////////////////////////////
 		// SERVO
-		if (menu_param.disable_error == 1) {
+		#if DARK_MENU
+		if (dark_menu_get_value(MENU_ERROR_SERVO) == 0)
+		#endif 
+		{
 			#if CONFIG_USE_ERROR_SERVO
 			servo_error_value = count_servo_error_value();
 			if (measure_get_filtered_value(MEAS_SERVO) > servo_error_value) //servo_vibro_value*5
@@ -298,7 +304,7 @@ static float count_motor_error_value(uint16_t x, float volt_accum)
 	float volt_in_motor_nominal = 14.2 * x/100;
 	float temp = 0.011*pow(x, 1.6281) + (volt_in_motor - volt_in_motor_nominal)/REZYSTANCJA_WIRNIKA;
 	#if DARK_MENU
-	temp = (float)(menu_param.motor_add - 50) * x/100 + temp;
+	temp = (float)(dark_menu_get_value(MENU_ERROR_MOTOR_CALIBRATION) - 50) * x/100 + temp;
 	#endif
 	/* Jak chcesz dobrac parametry mozesz dla testu odkomentowac linijke nizej debug_msg()
 		Funkcja zwraca prad maksymalny
@@ -330,7 +336,7 @@ static uint16_t count_motor_timeout_axelerate(uint16_t x)
 static uint16_t count_servo_error_value(void)
 {
 	#if DARK_MENU
-	return 100 + (menu_param.motor_add - 50);
+	return 100 + (dark_menu_get_value(MENU_ERROR_SERVO_CALIBRATION) - 50);
 	#else
 	return 100;
 	#endif

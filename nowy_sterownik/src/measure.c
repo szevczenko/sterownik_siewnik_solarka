@@ -106,8 +106,9 @@ void measure_process(void)
 		filtered_accum_adc_val = filtered_value(accumulator_tab, ACCUMULATOR_SIZE_TAB);
 		motor_filter_value = filtered_value(motor_f_table, FILTER_TABLE_SIZE);
 		s_o_t_filter_value = filtered_value(s_o_t_f_table, FILTER_TABLE_S_SIZE);
-		if (debug_msg_counter%80 == 0)
-			debug_msg("ADC_not filtered: accum %d, servo %d, motor %d\n",accum_adc, s_o_t_adc, motor_adc);
+		if (debug_msg_counter%80 == 0) {
+			//debug_msg("ADC_not filtered: accum %d, servo %d, motor %d\n",accum_adc, s_o_t_adc, motor_adc);
+		}
 		debug_msg_counter++;
 		
 		if (iteration_adc_accum_table == ACCUMULATOR_SIZE_TAB) iteration_adc_accum_table = 0;

@@ -76,15 +76,12 @@ void init_pin(void)
 
 void init_driver(void)
 {
-	#if CONFIG_DEVICE_SIEWNIK
-	init_menu();
+	#if USE_USART
+	uart_init(UART_BAUD_SELECT(57600, F_CPU));
 	#endif
 	timer0_init(TIM0_PRESCALER, TIM0_ARR);
 	init_display_drv();
 	init_buttons();
-	#if USE_USART
-	uart_init(UART_BAUD_SELECT(57600, F_CPU));
-	#endif
 	init_system();
 	init_measure();
 	CLEAR_PIN(SFIOR, PUD);
@@ -96,6 +93,9 @@ int main(void)
 	sei();
 	init_driver();
 	debug_msg("/-----------START SYSTEM------------/\n");
+	#if CONFIG_DEVICE_SIEWNIK
+	init_menu();
+	#endif
 	#if CONFIG_DEVICE_SIEWNIK
 	measure_get_servo_calibration();
 	#endif
