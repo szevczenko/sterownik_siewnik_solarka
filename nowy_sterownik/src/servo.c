@@ -38,7 +38,7 @@ void servo_set_pwm_val(uint8_t value)
 	else if(value < 50)
 	set_pwm(1800 - (value - 10)*7);
 	else if(value <= 99)
-	set_pwm(1450 - (value - 50)*5);
+	set_pwm(1500 - (value - 50)*5);
 }
 
 void servo_error(void)
