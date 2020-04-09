@@ -77,7 +77,7 @@ void error_event(void)
 	static uint32_t error_event_timer;
 	if (error_event_timer < mktime.ms && system_events&(1<<EV_SYSTEM_STATE))
 	{
-		error_event_timer = mktime.ms + 500;
+		error_event_timer = mktime.ms + 250;
 		if (system_events&(1<<EV_SYSTEM_ERROR_MOTOR)) return;
 		///////////////////////////////////////////////////////////////////////////////////////////
 		//MOTOR
@@ -185,7 +185,9 @@ void error_event(void)
 		{
 			#if CONFIG_USE_ERROR_SERVO
 			servo_error_value = count_servo_error_value();
-			if (measure_get_filtered_value(MEAS_SERVO) > servo_error_value) //servo_vibro_value*5
+			uint16_t servo_filt_val = measure_get_filtered_value(MEAS_SERVO);
+			debug_msg("servo_error_value: %d, filtered value: %d\n", servo_error_value, servo_filt_val);
+			if (servo_filt_val > servo_error_value) //servo_vibro_value*5
 			{
 				debug_msg("servo_error_value: %d\n", servo_error_value);
 				error_servo_status = 1;
@@ -336,9 +338,15 @@ static uint16_t count_motor_timeout_axelerate(uint16_t x)
 static uint16_t count_servo_error_value(void)
 {
 	#if DARK_MENU
-	return 100 + (dark_menu_get_value(MENU_ERROR_SERVO_CALIBRATION) - 50);
+	int ret = dark_menu_get_value(MENU_ERROR_SERVO_CALIBRATION);
+	if (ret < 0) {
+		return 0;
+	}
+	else {
+		return ret;
+	}
 	#else
-	return 100;
+	return 20;
 	#endif
 }
 #endif

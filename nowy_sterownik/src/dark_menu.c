@@ -31,7 +31,7 @@ menuPStruct_t menuParameters[] =
 {
 	[MENU_ERROR_SERVO] = {.max_value = 1, .default_value = 0},
 	[MENU_ERROR_MOTOR] = {.max_value = 1, .default_value = 0},
-	[MENU_ERROR_SERVO_CALIBRATION] = {.max_value = 99, .default_value = 50},
+	[MENU_ERROR_SERVO_CALIBRATION] = {.max_value = 99, .default_value = 20},
 	[MENU_ERROR_MOTOR_CALIBRATION] = {.max_value = 99, .default_value = 50},
 };
 uint8_t menuSaveParameters[4];
