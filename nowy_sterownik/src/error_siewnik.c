@@ -71,6 +71,12 @@ float errorGetMotorVal(void)
 {
 	return motor_error_value;
 }
+static uint32_t error_servo_tim;
+void error_servo_timer(void)
+{
+	debug_msg("ERROR: reset timer");
+	error_servo_tim = mktime.ms + 2000;
+}
 
 void error_event(void)
 {
@@ -187,7 +193,7 @@ void error_event(void)
 			servo_error_value = count_servo_error_value();
 			uint16_t servo_filt_val = measure_get_filtered_value(MEAS_SERVO);
 			debug_msg("servo_error_value: %d, filtered value: %d\n", servo_error_value, servo_filt_val);
-			if (servo_filt_val > servo_error_value) //servo_vibro_value*5
+			if (servo_filt_val > servo_error_value && error_servo_tim < mktime.ms) //servo_vibro_value*5
 			{
 				debug_msg("servo_error_value: %d\n", servo_error_value);
 				error_servo_status = 1;
@@ -251,6 +257,7 @@ void error_event(void)
 					{
 						error_servo_state = ERR_S_OK;
 						debug_msg("ERROR STATUS: ERR_S_OK\n\r");
+						servo_try_reset_timeout(3500);
 					}
 					break;
 					break;

@@ -351,7 +351,10 @@ void b_servo_vibro_add_fall(void * pv)
 	
 	#else
 	if (servo_vibro_value < 99)
-	servo_vibro_value++;
+	{
+		servo_vibro_value++;
+		error_servo_timer();
+	}
 	dip_set_value(DISP_SERVO, servo_vibro_value);
 	disp_set_state(DISP_ALL, SEG_VALUE);
 	#endif
@@ -431,6 +434,7 @@ void button_fall_solar(void * pv)
 	if (servo_vibro_value < 10)
 	{
 		servo_vibro_value = 10;
+		error_servo_timer();
 	}
 	//////////// OPCJONALNE
 // 	if (disp_get_state(DISP_SERVO) == SEG_BLINK)
@@ -517,8 +521,10 @@ void disp_fast_process(void)
 			}
 			
 			#else
-			if (servo_vibro_value > 10)
-			dip_set_value(DISP_SERVO, ++servo_vibro_value);
+			if (servo_vibro_value > 10) {
+				dip_set_value(DISP_SERVO, ++servo_vibro_value);
+				error_servo_timer();
+			}
 			#endif
 			counter_very_fast_servo_add++;
 			if (counter_very_fast_servo_add >= VERY_FAST_COUNTER_OVF)
@@ -546,8 +552,10 @@ void disp_fast_process(void)
 			}
 			
 			#else
-			if (servo_vibro_value > 10)
-			dip_set_value(DISP_SERVO, --servo_vibro_value);
+			if (servo_vibro_value > 10) {
+				dip_set_value(DISP_SERVO, --servo_vibro_value);
+				error_servo_timer();
+			}
 			#endif
 			counter_very_fast_servo_sub++;
 			if (counter_very_fast_servo_sub >= VERY_FAST_COUNTER_OVF)
@@ -609,6 +617,7 @@ void disp_very_fast_process(void)
 			}
 			
 			#else
+			error_servo_timer();
 			dip_set_value(DISP_SERVO, ++servo_vibro_value);
 			#endif
 		}
@@ -627,8 +636,10 @@ void disp_very_fast_process(void)
 			}
 			
 			#else
-			if (servo_vibro_value > 10)
-			dip_set_value(DISP_SERVO, --servo_vibro_value);
+			if (servo_vibro_value > 10) {
+				dip_set_value(DISP_SERVO, --servo_vibro_value);
+				error_servo_timer();
+			}
 			#endif
 		}
 		

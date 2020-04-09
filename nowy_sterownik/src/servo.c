@@ -15,6 +15,7 @@
 #include "tim.h"
 //#include "disp.h"
 #include "servo.h"
+#include "error_siewnik.h"
 #if CONFIG_DEVICE_SIEWNIK
 
 static void servo_exit_try(void);
@@ -60,7 +61,7 @@ static void servo_error_process(void)
 	}
 	else
 	{
-		evTime_start(&timeout, 2000);
+		evTime_start(&timeout, 3500);
 	}
 }
 
@@ -121,11 +122,13 @@ int servo_open(uint8_t value) // value - 0-100%
 		servo_set_pwm_val((uint16_t)value);
 		debug_msg("SERVO_OPPENED %d\n", value);
 		LED_SERVO_ON;
+		error_servo_timer();
 		return 1;
 	}
 	else if (servoD.state == SERVO_TRY)
 	{
 		servo_exit_try();
+		error_servo_timer();
 		return 1;
 	}
 	else return 0;
@@ -154,11 +157,13 @@ int servo_close(void)
 		servoD.value = 0;
 		debug_msg("SERVO_CLOSED %d\n", servoD.value);
 		LED_SERVO_OFF;
+		error_servo_timer();
 		return 1;
 	}
 	else if (servoD.state == SERVO_TRY)
 	{
 		servo_exit_try();
+		error_servo_timer();
 		return 1;
 	}
 	return 0;
