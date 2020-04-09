@@ -607,6 +607,7 @@ void disp_very_fast_process(void)
 			}
 			
 			#else
+			if (servo_vibro_value > 10)
 			dip_set_value(DISP_SERVO, ++servo_vibro_value);
 			#endif
 		}

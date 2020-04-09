@@ -192,7 +192,7 @@ static void servo_try_process(void)
 	static evTime timeout;
 	if (try_count == 0)
 	{
-		evTime_start(&timeout, 100);
+		evTime_start(&timeout, 150);
 		try_count++;
 		servo_set_pwm_val(servoD.value + try_count);
 	}
@@ -202,7 +202,7 @@ static void servo_try_process(void)
 		{
 			evTime_start(&timeout, 100);
 			try_count++;
-			servo_set_pwm_val(servoD.value + try_count);
+			servo_set_pwm_val(servoD.value + try_count*4);
 		}
 	}
 	else

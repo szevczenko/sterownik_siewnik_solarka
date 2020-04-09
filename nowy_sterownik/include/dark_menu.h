@@ -29,6 +29,7 @@ typedef enum
 	MENU_ERROR_MOTOR,
 	MENU_ERROR_SERVO_CALIBRATION,
 	MENU_ERROR_MOTOR_CALIBRATION,
+	MENU_BUZZER,
 	MENU_ERROR_LAST_PARAM
 }menuParam_t;
 
@@ -38,7 +39,7 @@ typedef struct
 	uint8_t default_value;
 }menuPStruct_t;
 
-extern uint8_t menuSaveParameters[4];
+//extern uint8_t menuSaveParameters[4];
 
 void menu_process(void);
 void init_menu(void);
