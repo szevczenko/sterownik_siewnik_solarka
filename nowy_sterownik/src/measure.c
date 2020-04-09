@@ -107,7 +107,7 @@ void measure_process(void)
 		motor_filter_value = filtered_value(motor_f_table, FILTER_TABLE_SIZE);
 		s_o_t_filter_value = filtered_value(s_o_t_f_table, FILTER_TABLE_S_SIZE);
 		if (debug_msg_counter%80 == 0) {
-			//debug_msg("ADC_not filtered: accum %d, servo %d, motor %d\n",accum_adc, s_o_t_adc, motor_adc);
+			debug_msg("ADC_not filtered: accum %d, servo %d, motor %d\n",accum_adc, s_o_t_adc, motor_adc);
 		}
 		debug_msg_counter++;
 		
