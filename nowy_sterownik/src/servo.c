@@ -83,6 +83,7 @@ void servo_init(uint8_t prescaler)
 	set_pwm(19999);
 	LED_SERVO_OFF;
 	#endif
+	servo_set_pwm_val((uint16_t)0);
 	servoD.state = SERVO_CLOSE;
 	servoD.value = 0;
 	evTime_init(&servoD.timeout);

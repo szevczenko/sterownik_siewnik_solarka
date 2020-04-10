@@ -193,7 +193,7 @@ void error_event(void)
 			servo_error_value = count_servo_error_value();
 			uint16_t servo_filt_val = measure_get_filtered_value(MEAS_SERVO);
 			//debug_msg("servo_error_value: %d, filtered value: %d\n", servo_error_value, servo_filt_val);
-			if (motor_value > servo_error_value && error_servo_tim < mktime.ms) //servo_filt_val*5
+			if (servo_filt_val > servo_error_value && error_servo_tim < mktime.ms) //servo_filt_val*5
 			{
 				//debug_msg("servo_error_value: %d\n", servo_error_value);
 				error_servo_status = 1;
