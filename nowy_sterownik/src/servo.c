@@ -34,7 +34,7 @@ static void set_pwm(uint16_t pwm)
 void servo_set_pwm_val(uint8_t value)
 {
 	if (value == 0)
-	set_pwm(1900);
+	set_pwm(2000);
 	else if(value < 50)
 	set_pwm(1800 - (value - 10)*7);
 	else if(value <= 99)
