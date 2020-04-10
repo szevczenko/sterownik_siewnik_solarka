@@ -110,7 +110,7 @@ void measure_process(void)
 		motor_filter_value = filtered_value(motor_f_table, FILTER_TABLE_SIZE);
 		s_o_t_filter_value = filtered_value(s_o_t_f_table, FILTER_TABLE_S_SIZE);
 		if ((debug_msg_counter%160 == 0) || (debug_msg_counter%10 == 0 && SERVO_CALIBRATION_VALUE == 0)) {
-			debug_msg("ADC_not filtered: accum %d, servo %d, motor %d, calibration %d\n",accum_adc, s_o_t_adc, motor_adc, SERVO_CALIBRATION_VALUE);
+			//debug_msg("ADC_not filtered: accum %d, servo %d, motor %d, calibration %d\n",accum_adc, s_o_t_adc, motor_adc, SERVO_CALIBRATION_VALUE);
 		}
 		debug_msg_counter++;
 		

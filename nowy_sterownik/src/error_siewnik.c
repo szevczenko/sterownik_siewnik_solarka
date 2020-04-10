@@ -111,7 +111,7 @@ void error_event(void)
 				{
 					case ERR_M_OK:
 						error_motor_state = ERR_M_WAIT;
-						debug_msg("ERROR STATUS: ERR_M_WAIT\n\r");
+						//debug_msg("ERROR STATUS: ERR_M_WAIT\n\r");
 						evTime_start(&motor_timer, count_motor_timeout_wait(dcmotor_get_pwm()));
 					break;
 					case ERR_M_WAIT:
@@ -120,14 +120,14 @@ void error_event(void)
 							dcmotor_set_try();
 							evTime_start(&motor_timer, count_motor_timeout_axelerate(dcmotor_get_pwm()));
 							error_motor_state = ERR_M_AXELERATE;
-							debug_msg("ERROR STATUS: ERR_M_AXELERATE\n\r");
+							//debug_msg("ERROR STATUS: ERR_M_AXELERATE\n\r");
 						}
 					break;
 					case ERR_M_AXELERATE:
 						if (evTime_check(&motor_timer))
 						{
 							error_motor_state = ERR_M_ERROR;
-							debug_msg("ERROR STATUS: ERR_M_ERROR\n\r");
+							//debug_msg("ERROR STATUS: ERR_M_ERROR\n\r");
 						}
 					break;
 					case ERR_M_ERROR:
@@ -138,7 +138,7 @@ void error_event(void)
 						{
 							evTime_start(&motor_timer, ERROR_M_TIME_EXIT);
 							error_motor_state = error_motor_last_state;
-							debug_msg("ERROR STATUS: go to last before wait\n\r");
+							//debug_msg("ERROR STATUS: go to last before wait\n\r");
 						}
 					break;
 				}
@@ -156,7 +156,7 @@ void error_event(void)
 						evTime_start(&motor_timer, ERROR_M_TIME_EXIT);
 						error_motor_state = ERR_M_EXIT;
 						error_motor_last_state = ERR_M_WAIT;
-						debug_msg("ERROR STATUS: ERR_M_EXIT\n\r");
+						//debug_msg("ERROR STATUS: ERR_M_EXIT\n\r");
 					}
 					break;
 					case ERR_M_AXELERATE:
@@ -166,7 +166,7 @@ void error_event(void)
 						dcmotor_set_normal_state();
 						error_motor_state = ERR_M_EXIT;
 						error_motor_last_state = ERR_M_AXELERATE;
-						debug_msg("ERROR STATUS: ERR_M_EXIT\n\r");
+						//debug_msg("ERROR STATUS: ERR_M_EXIT\n\r");
 					}
 					break;
 					case ERR_M_ERROR:
@@ -175,7 +175,7 @@ void error_event(void)
 					case ERR_M_EXIT:
 					if (evTime_check(&motor_timer))
 					{
-						debug_msg("ERROR STATUS: ERR_M_OK\n\r");
+						//debug_msg("ERROR STATUS: ERR_M_OK\n\r");
 						error_motor_state = ERR_M_OK;
 					}
 					break;
@@ -192,10 +192,10 @@ void error_event(void)
 			#if CONFIG_USE_ERROR_SERVO
 			servo_error_value = count_servo_error_value();
 			uint16_t servo_filt_val = measure_get_filtered_value(MEAS_SERVO);
-			debug_msg("servo_error_value: %d, filtered value: %d\n", servo_error_value, servo_filt_val);
-			if (servo_filt_val > servo_error_value && error_servo_tim < mktime.ms) //servo_vibro_value*5
+			//debug_msg("servo_error_value: %d, filtered value: %d\n", servo_error_value, servo_filt_val);
+			if (motor_value > servo_error_value && error_servo_tim < mktime.ms) //servo_filt_val*5
 			{
-				debug_msg("servo_error_value: %d\n", servo_error_value);
+				//debug_msg("servo_error_value: %d\n", servo_error_value);
 				error_servo_status = 1;
 			}
 			else
@@ -295,7 +295,9 @@ static void set_error_state(error_reason_ reason)
 	SET_PIN(system_events, EV_SYSTEM_ERROR_MOTOR);
 	display_set_error(reason);
 	dcmotor_set_error();
-	servo_error();
+	if (reason == ERR_REASON_MOTOR)
+		servo_error(1);
+	else servo_error(0);
 	system_error();
 	led_blink = reason;
 }
@@ -313,7 +315,7 @@ static float count_motor_error_value(uint16_t x, float volt_accum)
 	float volt_in_motor_nominal = 14.2 * x/100;
 	float temp = 0.011*pow(x, 1.6281) + (volt_in_motor - volt_in_motor_nominal)/REZYSTANCJA_WIRNIKA;
 	#if DARK_MENU
-	temp = (float)(dark_menu_get_value(MENU_ERROR_MOTOR_CALIBRATION) - 50) * x/100 + temp;
+	temp += (float)(dark_menu_get_value(MENU_ERROR_MOTOR_CALIBRATION) - 50) * x/400;
 	#endif
 	/* Jak chcesz dobrac parametry mozesz dla testu odkomentowac linijke nizej debug_msg()
 		Funkcja zwraca prad maksymalny

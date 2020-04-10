@@ -45,7 +45,7 @@ typedef struct
 }sDriver;
 
 void servo_init(uint8_t prescaler);
-void servo_error(void);
+void servo_error(uint8_t close);
 void servo_process(uint8_t value);
 int servo_close(void);
 void servo_enable_try(void);

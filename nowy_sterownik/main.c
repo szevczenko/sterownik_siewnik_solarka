@@ -89,6 +89,9 @@ void init_driver(void)
 
 int main(void)
 {
+	#if CONFIG_DEVICE_SIEWNIK
+	servo_init(0);
+	#endif
 	init_pin();
 	sei();
 	init_driver();
