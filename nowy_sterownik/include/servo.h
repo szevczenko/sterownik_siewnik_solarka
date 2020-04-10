@@ -29,6 +29,7 @@ typedef enum
 	SERVO_CLOSE,
 	SERVO_OPEN,
 	SERVO_DELAYED_OPEN,
+	SERVO_REGULATION,
 	SERVO_TRY,
 	SERVO_ERROR_PROCESS,
 	SERVO_ERROR
@@ -54,6 +55,7 @@ int servo_is_open(void);
 void servo_try_reset_timeout(uint32_t time_ms);
 int servo_delayed_open(uint8_t value);
 int servo_get_try_cnt(void);
+void servo_regulation(uint8_t value);
 
 #endif
 

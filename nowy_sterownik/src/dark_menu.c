@@ -18,6 +18,7 @@
 #include "but.h"
 #include "display_d.h"
 #include "mem.h"
+#include "servo.h"
 
 /*
  * Dla zmiany hasla wejscia do dark_menu edytowac password[]
@@ -34,6 +35,8 @@ menuPStruct_t menuParameters[] =
 	[MENU_ERROR_SERVO_CALIBRATION] = {.max_value = 99, .default_value = 20},
 	[MENU_ERROR_MOTOR_CALIBRATION] = {.max_value = 99, .default_value = 50},
 	[MENU_BUZZER] = {.max_value = 1, .default_value = 0},
+	[MENU_CLOSE_SERVO_REGULATION] = {.max_value = 99, .default_value = 50},
+	[MENU_OPEN_SERVO_REGULATION] = {.max_value = 99, .default_value = 50},
 };
 uint8_t menuSaveParameters[sizeof(menuParameters)/sizeof(menuPStruct_t)];
 
@@ -201,6 +204,14 @@ void menu_process(void)
 			segment1.state = SEG_OFF;
 			segment2.state = SEG_OFF;
 			dark_menu_state = 0;
+		}
+		if (configured_parameter == MENU_CLOSE_SERVO_REGULATION)
+		{
+			servo_regulation(0);
+		}
+		if (configured_parameter == MENU_OPEN_SERVO_REGULATION)
+		{
+			servo_regulation(99);
 		}
 	}
 }

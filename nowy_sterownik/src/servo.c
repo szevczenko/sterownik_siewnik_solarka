@@ -16,6 +16,7 @@
 //#include "disp.h"
 #include "servo.h"
 #include "error_siewnik.h"
+#include "dark_menu.h"
 #if CONFIG_DEVICE_SIEWNIK
 
 static void servo_exit_try(void);
@@ -33,12 +34,22 @@ static void set_pwm(uint16_t pwm)
 
 void servo_set_pwm_val(uint8_t value)
 {
-	if (value == 0)
+	int min = 2000 + (50 - dark_menu_get_value(MENU_CLOSE_SERVO_REGULATION))*10;
+	int max = 1275 + (50 - dark_menu_get_value(MENU_OPEN_SERVO_REGULATION))*10;
+	
+	set_pwm( (min-max)/99*value + min );
+	/*if (value == 0)
 	set_pwm(2000);
 	else if(value < 50)
 	set_pwm(1800 - (value - 10)*7);
 	else if(value <= 99)
-	set_pwm(1520 - (value - 50)*5);
+	set_pwm(1520 - (value - 50)*5);*/
+}
+
+void servo_regulation(uint8_t value)
+{
+	servoD.state = SERVO_REGULATION;
+	servo_set_pwm_val(value);
 }
 
 void servo_error(uint8_t close)

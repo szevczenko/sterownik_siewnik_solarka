@@ -18,7 +18,8 @@ src/servo.d src/servo.o: ../src/servo.c ../include/config.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\util\delay_basic.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\math.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\interrupt.h \
- ../include/tim.h ../include/servo.h ../include/error_siewnik.h
+ ../include/tim.h ../include/servo.h ../include/error_siewnik.h \
+ ../include/dark_menu.h
 
 ../include/config.h:
 
@@ -67,3 +68,5 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\
 ../include/servo.h:
 
 ../include/error_siewnik.h:
+
+../include/dark_menu.h:
