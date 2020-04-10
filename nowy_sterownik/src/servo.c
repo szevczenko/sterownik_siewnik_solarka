@@ -36,8 +36,9 @@ void servo_set_pwm_val(uint8_t value)
 {
 	int min = 2000 + (50 - dark_menu_get_value(MENU_CLOSE_SERVO_REGULATION))*10;
 	int max = 1275 + (50 - dark_menu_get_value(MENU_OPEN_SERVO_REGULATION))*10;
-	
-	set_pwm( (min-max)/99*value + min );
+	uint16_t pwm = (uint16_t)((float)(max-min)*(float)value/(float)99 + (float)min);
+	//debug_msg("REG: close %d, open %d, pwm %d\n", min, max, pwm);
+	set_pwm(pwm);
 	/*if (value == 0)
 	set_pwm(2000);
 	else if(value < 50)

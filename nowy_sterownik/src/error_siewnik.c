@@ -74,7 +74,7 @@ float errorGetMotorVal(void)
 static uint32_t error_servo_tim;
 void error_servo_timer(void)
 {
-	debug_msg("ERROR: reset timer");
+	//debug_msg("ERROR: reset timer");
 	error_servo_tim = mktime.ms + 2000;
 }
 

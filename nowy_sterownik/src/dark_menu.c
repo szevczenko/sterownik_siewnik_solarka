@@ -55,7 +55,7 @@ static void save_parametrs(void)
 static void read_menu_parametrs(void)
 {
 	mem_read_data(MEM_CALIBRATION, menuSaveParameters);
-	debug_msg("menu_read %d %d %d %d\n\r", menuSaveParameters[0], menuSaveParameters[1], menuSaveParameters[2], menuSaveParameters[3]);
+	//debug_msg("menu_read %d %d %d %d\n\r", menuSaveParameters[0], menuSaveParameters[1], menuSaveParameters[2], menuSaveParameters[3]);
 }
 
 //powinno byc uruchomiane po wczytaniu z EEPROAM
@@ -93,14 +93,14 @@ static void clear_password(void)
 static void pass_add_number(uint8_t number)
 {
 	pass[pass_len++] = number;
-	debug_msg("pass %d\n", number);
+	//debug_msg("pass %d\n", number);
 	if (memcmp(pass, password, pass_len) != 0) {
-		debug_msg("clear_password\n");
+		//debug_msg("clear_password\n");
 		clear_password();
 		return;
 	}
 	if (pass_len == sizeof(pass)) {
-		debug_msg("enter_to_menu\n");
+		//debug_msg("enter_to_menu\n");
 		enter_to_menu();
 	}
 }
@@ -133,8 +133,8 @@ static void button_7_number(void *pv)
 
 static void button_debug_msg(void)
 {
-	debug_msg("conf: %d\n", configured_parameter);
-	debug_msg("menu after check %d %d %d %d\n\r", menuSaveParameters[0], menuSaveParameters[1], menuSaveParameters[2], menuSaveParameters[3]);
+	//debug_msg("conf: %d\n", configured_parameter);
+	//debug_msg("menu after check %d %d %d %d\n\r", menuSaveParameters[0], menuSaveParameters[1], menuSaveParameters[2], menuSaveParameters[3]);
 }
 
 static void button_1_menu(void *pv) 
@@ -180,7 +180,7 @@ void menu_process(void)
 	static timer_t menu_timer;
 	if (menu_timer < mktime.ms && dark_menu_state == 1)
 	{
-		menu_timer = mktime.ms + 50;
+		menu_timer = mktime.ms + 250;
 		if (segment1.state == SEG_MENU)
 			disp_set_number(&segment1, configured_parameter);
 		if (segment2.state == SEG_MENU)
