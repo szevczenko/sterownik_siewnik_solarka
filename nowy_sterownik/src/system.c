@@ -132,9 +132,6 @@ void off_system(void)
 	off_button();
 	error_deinit();
 	#if CONFIG_DEVICE_SIEWNIK
-	#if DARK_MENU
-	init_menu();
-	#endif /* DARK_MENU */
 	servo_close();
 	#endif /* CONFIG_DEVICE_SIEWNIK */
 	#if CONFIG_DEVICE_SOLARKA
@@ -143,6 +140,9 @@ void off_system(void)
 	system_events = 0;
 	disp_set_state(DISP_ALL,SEG_OFF);
 	CLEAR_PIN(system_events, EV_SYSTEM_STATE);
+	#if CONFIG_DEVICE_SIEWNIK && DARK_MENU
+	init_menu();
+	#endif
 	//debug_msg("SYS: Off system %d\n", system_events);
 }
 

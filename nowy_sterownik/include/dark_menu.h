@@ -20,7 +20,8 @@ typedef struct
 typedef enum
 {
 	MENU_PASSWORD,
-	MENU_PARAMETERS	
+	MENU_PARAMETERS,
+	MENU_SERVO
 }menuState_t;
 
 typedef enum
