@@ -89,5 +89,6 @@ typedef enum
 
 extern but_t button1, button2, button3, button4, button5, button6, button7, button8, button9, button10;
 
+uint8_t read_button(but_t *but);
 
 #endif /* BUT_H_ */

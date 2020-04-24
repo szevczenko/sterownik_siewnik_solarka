@@ -19,6 +19,7 @@
 #include "display_d.h"
 #include "mem.h"
 #include "servo.h"
+#include "but.h"
 
 /*
  * Dla zmiany hasla wejscia do dark_menu edytowac password[]
@@ -26,7 +27,7 @@
 const uint8_t password[] = {1,0,2,4,3,5};
 uint8_t pass[sizeof(password)];
 uint8_t pass_len;
-uint8_t dark_menu_state;
+menuState_t dark_menu_state;
 uint8_t configured_parameter;
 menuPStruct_t menuParameters[] = 
 {
@@ -46,7 +47,7 @@ uint8_t dark_menu_parameters_len(void)
 	return sizeof(menuSaveParameters);
 }
 
-static void enter_to_menu(void);
+static void enter_to_menu(menuState_t state);
 
 static void save_parametrs(void)
 {
@@ -102,7 +103,7 @@ static void pass_add_number(uint8_t number)
 	}
 	if (pass_len == sizeof(pass)) {
 		//debug_msg("enter_to_menu\n");
-		enter_to_menu();
+		enter_to_menu(MENU_PARAMETERS);
 	}
 }
 
@@ -119,6 +120,7 @@ static void button_3_number(void *pv)
 {
 	pass_add_number(2);
 }
+
 static void button_5_number(void *pv)
 {
 	pass_add_number(3);
@@ -179,9 +181,16 @@ static void button_7_menu(void *pv)
 void menu_process(void)
 {
 	static timer_t menu_timer;
-	if (menu_timer < mktime.ms && dark_menu_state == 1)
+	if (menu_timer < mktime.ms && dark_menu_state > MENU_PASSWORD)
 	{
 		menu_timer = mktime.ms + 250;
+		if (dark_menu_state == MENU_SERVO)
+		{
+			if (configured_parameter < MENU_CLOSE_SERVO_REGULATION)
+				configured_parameter = MENU_CLOSE_SERVO_REGULATION;
+			if (configured_parameter > MENU_OPEN_SERVO_REGULATION)
+				configured_parameter = MENU_OPEN_SERVO_REGULATION;	
+		}
 		if (segment1.state == SEG_MENU)
 			disp_set_number(&segment1, configured_parameter);
 		if (segment2.state == SEG_MENU)
@@ -204,7 +213,7 @@ void menu_process(void)
 		{
 			segment1.state = SEG_OFF;
 			segment2.state = SEG_OFF;
-			dark_menu_state = 0;
+			dark_menu_state = MENU_PASSWORD;
 		}
 		if (configured_parameter == MENU_CLOSE_SERVO_REGULATION)
 		{
@@ -217,6 +226,23 @@ void menu_process(void)
 	}
 }
 
+static void enter_servo_config(void *pv)
+{
+	enter_to_menu(MENU_SERVO);
+	debug_msg("enter_to_menu_servo\n");
+}
+
+void check_servo_config_menu(void)
+{
+	timer_t menu_timer = mktime.ms + 20;
+	while (menu_timer > mktime.ms)
+	{
+		if (read_button(&button1) == 0) {
+			enter_servo_config(NULL);
+			break;
+		}
+	}
+}
 void init_menu(void)
 {
 	button1.fall_callback = button_1_number;
@@ -228,6 +254,7 @@ void init_menu(void)
 	read_menu_parametrs();
 	check_menu_parameters();
 	clear_password();
+	check_servo_config_menu();
 }
 
 uint8_t dark_menu_get_value(menuParam_t param)
@@ -238,9 +265,9 @@ uint8_t dark_menu_get_value(menuParam_t param)
 	return 0;
 }
 
-static void enter_to_menu(void)
+static void enter_to_menu(menuState_t state)
 {
-	dark_menu_state = MENU_PARAMETERS;
+	dark_menu_state = state;
 	button1.fall_callback = button_1_menu;
 	button2.fall_callback = button_2_menu;
 	button3.fall_callback = button_3_menu;
