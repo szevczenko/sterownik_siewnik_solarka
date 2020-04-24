@@ -30,13 +30,14 @@ uint8_t dark_menu_state;
 uint8_t configured_parameter;
 menuPStruct_t menuParameters[] = 
 {
-	[MENU_ERROR_SERVO] = {.max_value = 1, .default_value = 0},
-	[MENU_ERROR_MOTOR] = {.max_value = 1, .default_value = 0},
+	[MENU_ERROR_SERVO] = {.max_value = 1, .default_value = 1},
+	[MENU_ERROR_MOTOR] = {.max_value = 1, .default_value = 1},
 	[MENU_ERROR_SERVO_CALIBRATION] = {.max_value = 99, .default_value = 20},
 	[MENU_ERROR_MOTOR_CALIBRATION] = {.max_value = 99, .default_value = 50},
-	[MENU_BUZZER] = {.max_value = 1, .default_value = 0},
+	[MENU_BUZZER] = {.max_value = 1, .default_value = 1},
 	[MENU_CLOSE_SERVO_REGULATION] = {.max_value = 99, .default_value = 50},
 	[MENU_OPEN_SERVO_REGULATION] = {.max_value = 99, .default_value = 50},
+	[MENU_TRY_OPEN_CALIBRATION] = {.max_value = 10, .default_value = 8},
 };
 uint8_t menuSaveParameters[sizeof(menuParameters)/sizeof(menuPStruct_t)];
 

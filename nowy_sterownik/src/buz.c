@@ -21,7 +21,7 @@ void buzzer_process(void)
 	if (buzzer_timer < mktime.ms)
 	{
 		#if CONFIG_DEVICE_SIEWNIK && DARK_MENU
-		if (dark_menu_get_value(MENU_BUZZER) == 0)
+		if (dark_menu_get_value(MENU_BUZZER))
 		#endif
 		{
 			if (system_events&(1<<EV_ON_BUZZER) && buzzer_state==0)

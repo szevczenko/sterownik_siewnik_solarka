@@ -101,7 +101,7 @@ void error_event(void)
 			error_motor_status = 0;
 		}
 		#if DARK_MENU
-		if (dark_menu_get_value(MENU_ERROR_MOTOR) == 0)
+		if (dark_menu_get_value(MENU_ERROR_MOTOR))
 		#endif
 		{
 			#if CONFIG_USE_ERROR_MOTOR
@@ -186,7 +186,7 @@ void error_event(void)
 		//////////////////////////////////////////////////////////////////////////////////////
 		// SERVO
 		#if DARK_MENU
-		if (dark_menu_get_value(MENU_ERROR_SERVO) == 0)
+		if (dark_menu_get_value(MENU_ERROR_SERVO))
 		#endif 
 		{
 			#if CONFIG_USE_ERROR_SERVO

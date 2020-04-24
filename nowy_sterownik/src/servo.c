@@ -221,7 +221,7 @@ static void servo_try_process(void)
 		{
 			evTime_start(&timeout, 250);
 			try_count++;
-			servo_set_pwm_val(servoD.value + try_count*4);
+			servo_set_pwm_val(servoD.value + try_count*dark_menu_get_value(MENU_TRY_OPEN_CALIBRATION));
 		}
 	}
 	else

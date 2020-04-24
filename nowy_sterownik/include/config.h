@@ -109,7 +109,7 @@ typedef enum
 #define UART_RX0_BUFFER_SIZE 0
 #define UART_TX0_BUFFER_SIZE 128
 #define USART0_ENABLED
-#define USE_USART 1
+#define USE_USART 0
 
 ///////////////////////////////////////////
 ///ERROR

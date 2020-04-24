@@ -91,7 +91,7 @@ static void sys_save_display(void)
 
 void init_system(void)
 {
-	button4.rise_callback = button4_toggle_system;
+	button4.fall_callback = button4_toggle_system;
 	disp_set_state(DISP_ALL,SEG_OFF);
 	disp_off_segments();
 	sys_read_display();
