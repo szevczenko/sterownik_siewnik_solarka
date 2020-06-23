@@ -39,6 +39,8 @@ menuPStruct_t menuParameters[] =
 	[MENU_CLOSE_SERVO_REGULATION] = {.max_value = 99, .default_value = 50},
 	[MENU_OPEN_SERVO_REGULATION] = {.max_value = 99, .default_value = 50},
 	[MENU_TRY_OPEN_CALIBRATION] = {.max_value = 10, .default_value = 8},
+	[MENU_MOTOR_MINIMUM_REGULATION] = {.max_value = 99, .default_value = 20},
+	[MENU_MOTOR_MAXIMUM_REGULATION] = {.max_value = 99, .default_value = 99}
 };
 uint8_t menuSaveParameters[sizeof(menuParameters)/sizeof(menuPStruct_t)];
 
@@ -222,6 +224,12 @@ void menu_process(void)
 		if (configured_parameter == MENU_OPEN_SERVO_REGULATION)
 		{
 			servo_regulation(99);
+		}
+		if (configured_parameter == MENU_MOTOR_MINIMUM_REGULATION) {
+			
+		}
+		if (configured_parameter == MENU_MOTOR_MAXIMUM_REGULATION) {
+			
 		}
 	}
 }

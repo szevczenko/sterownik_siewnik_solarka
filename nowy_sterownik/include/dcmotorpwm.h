@@ -13,6 +13,7 @@ Please refer to LICENSE file for licensing information.
 #include "tim.h"
 #include "stdint.h"
 #include "config.h"
+#include "dark_menu.h"
 //set motor port
 #define DCMOTORPWM_DDR DDRD
 #define DCMOTORPWM_PORT PORTD
@@ -25,7 +26,7 @@ Please refer to LICENSE file for licensing information.
 #endif
 
 #if CONFIG_DEVICE_SIEWNIK
-#define DCMOTORPWM_MINVEL 20
+#define DCMOTORPWM_MINVEL dark_menu_get_value(MENU_MOTOR_MINIMUM_REGULATION)
 #endif
 
 //freq = 1 / time
@@ -49,7 +50,8 @@ typedef enum
 	MOTOR_ON,
 	MOTOR_TRY,
 	MOTOR_AXELERATE,
-	MOTOR_ERROR 
+	MOTOR_ERROR ,
+	MOTOR_REGULATION,
 }motorState;
 
 typedef struct  

@@ -119,7 +119,7 @@ int dcmotorpwm_start(void)
 
 static uint8_t count_pwm(int pwm)
 {
-	return DCMOTORPWM_MINVEL + (255 - DCMOTORPWM_MINVEL)*pwm/99;
+	return DCMOTORPWM_MINVEL + (156 + dark_menu_get_value(MENU_MOTOR_MAXIMUM_REGULATION) - DCMOTORPWM_MINVEL)*pwm/99;
 }
 
 int dcmotor_set_pwm(int pwm)
@@ -166,6 +166,11 @@ int dcmotor_set_normal_state(void)
 		return 1;
 	}
 	return 0;
+}
+
+void motor_regulation(uint8_t pwm) {
+	motorD.state = MOTOR_REGULATION;
+	motorD.pwm_value = pwm;
 }
 
 void dcmotor_process(uint8_t value)
@@ -222,6 +227,11 @@ void dcmotor_process(uint8_t value)
 			{
 				motorD.state = MOTOR_ON;
 			}
+			break;
+			
+			case MOTOR_REGULATION:
+				motorD.pwm_value = value;
+				OCR2 = count_pwm(value);
 			break;
 
 		}

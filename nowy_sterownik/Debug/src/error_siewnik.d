@@ -12,8 +12,8 @@ src/error_siewnik.d src/error_siewnik.o: ../src/error_siewnik.c \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\version.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\fuse.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\lock.h \
- ../include/tim.h ../include/dcmotorpwm.h ../include/tim.h \
- ../include/system.h ../include/servo.h ../include/buz.h \
+ ../include/tim.h ../include/dcmotorpwm.h ../include/dark_menu.h \
+ ../include/tim.h ../include/system.h ../include/servo.h ../include/buz.h \
  ../include/config.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\interrupt.h \
  ../include/display_d.h ../include/disp.h ../include/system.h \
@@ -53,6 +53,8 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\
 ../include/tim.h:
 
 ../include/dcmotorpwm.h:
+
+../include/dark_menu.h:
 
 ../include/tim.h:
 
