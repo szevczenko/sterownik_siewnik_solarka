@@ -78,5 +78,6 @@ int dcmotor_set_normal_state(void);
 int dcmotor_get_pwm(void);
 void dcmotorpwm_goforward(uint8_t vel);
 void dcmotorpwm_gobackward(uint8_t vel);
+void motor_regulation(uint8_t pwm);
 
 #endif

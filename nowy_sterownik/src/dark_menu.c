@@ -20,6 +20,7 @@
 #include "mem.h"
 #include "servo.h"
 #include "but.h"
+#include "dcmotorpwm.h"
 
 /*
  * Dla zmiany hasla wejscia do dark_menu edytowac password[]
@@ -226,10 +227,10 @@ void menu_process(void)
 			servo_regulation(99);
 		}
 		if (configured_parameter == MENU_MOTOR_MINIMUM_REGULATION) {
-			
+			motor_regulation(10);
 		}
 		if (configured_parameter == MENU_MOTOR_MAXIMUM_REGULATION) {
-			
+			motor_regulation(99);
 		}
 	}
 }

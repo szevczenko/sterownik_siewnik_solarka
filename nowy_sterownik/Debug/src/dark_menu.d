@@ -20,7 +20,7 @@ src/dark_menu.d src/dark_menu.o: ../src/dark_menu.c ../include/config.h \
  ../include/tim.h ../include/dark_menu.h ../include/eeprom.h \
  ../include/disp.h ../include/but.h ../include/display_d.h \
  ../include/disp.h ../include/system.h ../include/mem.h \
- ../include/dark_menu.h ../include/servo.h
+ ../include/dark_menu.h ../include/servo.h ../include/dcmotorpwm.h
 
 ../include/config.h:
 
@@ -83,3 +83,5 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\lib\
 ../include/dark_menu.h:
 
 ../include/servo.h:
+
+../include/dcmotorpwm.h:
