@@ -25,6 +25,16 @@
 #endif
 
 //////////////////////////////////////////////////
+/// POWER_SUPPLY
+typedef enum {
+	POWER_SUPPLY_NONE,
+	POWER_SUPPLY_12V,
+	POWER_SUPPLY_24V
+}power_supply_voltage_t;
+
+extern power_supply_voltage_t power_supply_type;
+
+//////////////////////////////////////////////////
 // DEVICE ERROR
 #if (CONFIG_DEVICE_SOLARKA && CONFIG_DEVICE_SIEWNIK) || (!CONFIG_DEVICE_SOLARKA && !CONFIG_DEVICE_SIEWNIK)
 #error "Wlacz tylko 1 urrzadzenie, solarka albo siewnik";

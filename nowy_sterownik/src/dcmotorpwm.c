@@ -119,6 +119,10 @@ int dcmotorpwm_start(void)
 
 static uint8_t count_pwm(int pwm)
 {
+	float voltage_compesation = 1.7;
+	if (power_supply_type == POWER_SUPPLY_24V) {
+		return DCMOTORPWM_MINVEL + (156 + dark_menu_get_value(MENU_MOTOR_MAXIMUM_REGULATION) - DCMOTORPWM_MINVEL)*pwm/99/voltage_compesation;
+	}
 	return DCMOTORPWM_MINVEL + (156 + dark_menu_get_value(MENU_MOTOR_MAXIMUM_REGULATION) - DCMOTORPWM_MINVEL)*pwm/99;
 }
 

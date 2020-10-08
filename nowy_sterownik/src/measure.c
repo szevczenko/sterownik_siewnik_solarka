@@ -2,6 +2,7 @@
 #include "measure.h"
 #include "config.h"
 #include "adc.h"
+#include "accumulator.h"
 
 //600
 #define SERVO_CALIBRATION_VALUE calibration_value 
@@ -32,12 +33,21 @@ static uint16_t calibration_value;
 void measure_get_servo_calibration(void)
 {
 	timer_t calibration_timer = 0;
-	calibration_timer = mktime.ms + 1500;
+	calibration_timer = mktime.ms + 700;
+	float accum_voltage;
 	while(1)
 	{
 		measure_process();
 		if (calibration_timer < mktime.ms)
 		{
+			accum_voltage = accum_get_voltage();
+			
+			if (accum_voltage > 17) {
+				power_supply_type = POWER_SUPPLY_24V;
+			}
+			else {
+				power_supply_type = POWER_SUPPLY_12V;
+			}
 			calibration_value = measure_get_filtered_value(MEAS_SERVO);
 			debug_msg("MEASURE SERVO Calibration value = %d\n", calibration_value);
 			break;

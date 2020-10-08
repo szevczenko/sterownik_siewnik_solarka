@@ -22,6 +22,8 @@
 #include "error_solarka.h"
 #include "dark_menu.h"
 
+power_supply_voltage_t power_supply_type;
+
 #if L_DEBUG
 #include <stdio.h>
 char debug_buff[64];
