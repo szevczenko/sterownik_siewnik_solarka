@@ -8,9 +8,9 @@
 #define ACCUMULATOR_LOW_VOLTAGE 11 //395
 #define ACCUMULATOR_VERY_LOW_VOLTAGE 9.7 //350
 
-#define ACCUMULATOR_HIGH_VOLTAGE_24V 28 //600
-#define ACCUMULATOR_LOW_VOLTAGE_24V 20 //395
-#define ACCUMULATOR_VERY_LOW_VOLTAGE_24V 19 //350
+#define ACCUMULATOR_HIGH_VOLTAGE_24V 31.5 //600
+#define ACCUMULATOR_LOW_VOLTAGE_24V 24 //395
+#define ACCUMULATOR_VERY_LOW_VOLTAGE_24V 22 //350
 
 
 // 
@@ -42,9 +42,9 @@ static float voltage = 0;
 float accum_get_voltage(void)
 {
 	#if CONFIG_DEVICE_SOLARKA
-    voltage = measure_get_filtered_value(MEAS_ACCUM)*5*5.7/1024 + 0.7;
+    voltage = measure_get_filtered_value(MEAS_ACCUM)*10*5.3/1024 + 0.7;
 	#else
-	voltage = measure_get_filtered_value(MEAS_ACCUM)*5*5.7/1024;
+	voltage = measure_get_filtered_value(MEAS_ACCUM)*10*5.3/1024;
 	#endif
     return voltage;
 }
