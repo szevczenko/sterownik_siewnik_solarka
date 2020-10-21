@@ -312,11 +312,27 @@ int get_calibration_value(uint8_t type)
 static float count_motor_error_value(uint16_t x, float volt_accum)
 {
 	float volt_in_motor = volt_accum * x/100;
-	float volt_in_motor_nominal = 14.2 * x/100;
+	float volt_in_motor_nominal;
+	
+	if (power_supply_type == POWER_SUPPLY_24V) {
+		volt_in_motor_nominal = 28 * x/100;
+	}
+	else {
+		volt_in_motor_nominal = 14.2 * x/100;
+	}
+	
 	float temp = 0.011*pow(x, 1.6281) + (volt_in_motor - volt_in_motor_nominal)/REZYSTANCJA_WIRNIKA;
+	
 	#if DARK_MENU
-	temp += (float)(dark_menu_get_value(MENU_ERROR_MOTOR_CALIBRATION) - 50) * x/400;
+	if (power_supply_type == POWER_SUPPLY_24V) {
+		/* Dla zasilania 24 V poprawiæ wartosc odejmowana */ 
+		temp += (float)(dark_menu_get_value(MENU_ERROR_MOTOR_CALIBRATION) - 62) * x/400;
+	}
+	else {
+		temp += (float)(dark_menu_get_value(MENU_ERROR_MOTOR_CALIBRATION) - 50) * x/400;
+	}
 	#endif
+	
 	/* Jak chcesz dobrac parametry mozesz dla testu odkomentowac linijke nizej debug_msg()
 		Funkcja zwraca prad maksymalny
 		x						- wartosc na wyswietlaczu PWM
