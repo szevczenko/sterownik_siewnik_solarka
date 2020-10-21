@@ -70,7 +70,7 @@ void init_measure(void)
 {
 	for(uint8_t i = 0; i<ACCUMULATOR_SIZE_TAB; i++)
 	{
-		accumulator_tab[i] = ACCUMULATOR_LOW_VOLTAGE + (ACCUMULATOR_HIGH_VOLTAGE - ACCUMULATOR_LOW_VOLTAGE)/2;
+		accumulator_tab[i] = ACCUMULATOR_LOW_VOLTAGE_MEAS + (ACCUMULATOR_HIGH_VOLTAGE_MEAS - ACCUMULATOR_LOW_VOLTAGE_MEAS)/2;
 	}
     for(uint8_t i = 0; i<FILTER_TABLE_SIZE; i++)
 	{

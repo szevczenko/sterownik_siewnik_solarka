@@ -4,11 +4,13 @@
 #include "measure.h"
 #include "config.h"
 
-#define ACCUMULATOR_SIZE_TAB 20
-#define ACCUMULATOR_ADC_CH 0 //0.028 [V/adc]
-#define ACCUMULATOR_HIGH_VOLTAGE 600
-#define ACCUMULATOR_LOW_VOLTAGE 395
-#define ACCUMULATOR_VERY_LOW_VOLTAGE 350
+#define ACCUMULATOR_HIGH_VOLTAGE 16.6 //600
+#define ACCUMULATOR_LOW_VOLTAGE 11 //395
+#define ACCUMULATOR_VERY_LOW_VOLTAGE 9.7 //350
+
+#define ACCUMULATOR_HIGH_VOLTAGE_24V 28 //600
+#define ACCUMULATOR_LOW_VOLTAGE_24V 20 //395
+#define ACCUMULATOR_VERY_LOW_VOLTAGE_24V 19 //350
 
 
 // 
@@ -47,7 +49,7 @@ float accum_get_voltage(void)
     return voltage;
 }
 
-static uint16_t filtered_accum_adc_val;
+static float accum_voltage;
 
 void accumulator_process(void)
 {
@@ -56,26 +58,52 @@ void accumulator_process(void)
 	
 	if(accumulator_timer < mktime.ms)
 	{
-		filtered_accum_adc_val = measure_get_filtered_value(MEAS_ACCUM);
-		if (filtered_accum_adc_val > ACCUMULATOR_HIGH_VOLTAGE)
-		{
-			accumulator_state = ACCUM_HIGH_VOLTAGE;
+		accum_voltage = accum_get_voltage();
+		if (power_supply_type == POWER_SUPPLY_24V) {
+			/* Dla akumulatora 24V */
+			if (accum_voltage > ACCUMULATOR_HIGH_VOLTAGE_24V)
+			{
+				accumulator_state = ACCUM_HIGH_VOLTAGE;
+			}
+			
+			if (accum_voltage < ACCUMULATOR_LOW_VOLTAGE_24V)
+			{
+				accumulator_state =  ACCUM_LOW_VOLTAGE;
+			}
+			
+			if (accum_voltage < ACCUMULATOR_VERY_LOW_VOLTAGE_24V)
+			{
+				accumulator_state = ACCUM_VERY_LOW_VOLTAGE;
+			}
+			
+			if (accum_voltage < ACCUMULATOR_HIGH_VOLTAGE_24V && accum_voltage > ACCUMULATOR_LOW_VOLTAGE_24V)
+			{
+				accumulator_state = ACCUM_NORMAL_VOLTAGE;
+			}
+		}
+		else {
+			/* Dla akumulatora 12V */
+			if (accum_voltage > ACCUMULATOR_HIGH_VOLTAGE)
+			{
+				accumulator_state = ACCUM_HIGH_VOLTAGE;
+			}
+			
+			if (accum_voltage < ACCUMULATOR_LOW_VOLTAGE)
+			{
+				accumulator_state =  ACCUM_LOW_VOLTAGE;
+			}
+			
+			if (accum_voltage < ACCUMULATOR_VERY_LOW_VOLTAGE)
+			{
+				accumulator_state = ACCUM_VERY_LOW_VOLTAGE;
+			}
+			
+			if (accum_voltage < ACCUMULATOR_HIGH_VOLTAGE && accum_voltage > ACCUMULATOR_LOW_VOLTAGE)
+			{
+				accumulator_state = ACCUM_NORMAL_VOLTAGE;
+			}
 		}
 		
-		if (filtered_accum_adc_val < ACCUMULATOR_LOW_VOLTAGE)
-		{
-			accumulator_state =  ACCUM_LOW_VOLTAGE;
-		}
-		
-		if (filtered_accum_adc_val < ACCUMULATOR_VERY_LOW_VOLTAGE)
-		{   
-			accumulator_state = ACCUM_VERY_LOW_VOLTAGE;
-		}
-		
-		if (filtered_accum_adc_val < ACCUMULATOR_HIGH_VOLTAGE && filtered_accum_adc_val > ACCUMULATOR_LOW_VOLTAGE)
-		{
-			accumulator_state = ACCUM_NORMAL_VOLTAGE;
-		}
 		accumulator_timer = mktime.ms + 100;
 	}
 }
